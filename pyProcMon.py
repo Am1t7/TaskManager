@@ -9,7 +9,7 @@ from googlesearch import search
 from limits import Limits
 from DB import DB
 import uuid
-import os
+
 
 ########################################################################
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
@@ -204,7 +204,7 @@ class MainPanel(wx.Panel):
         """
         print ("update thread started!")
         self.timer.Stop()
-        controller.ProcThread(self.limit.get_cpu_limit(),self.limit.get_mem_limit(),self.limit.get_disk_limit())
+        controller.ProcThread()
 
     #----------------------------------------------------------------------
     def updateDisplay(self, procs, bad_procs):
@@ -283,7 +283,24 @@ class LimitsPanel(wx.Panel):
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
-        self.db.add_user(mac, cpu, mem ,disk)
+        if self.db.mac_exist(mac):
+            if cpu == "":
+                cpu = 100.0
+                self.db.update_limits_details("cpu", cpu)
+            if mem == "":
+                mem = 1000.0
+                self.db.update_limits_details("mem", mem)
+            if disk == "":
+                disk = 1000.0
+                self.db.update_limits_details("disk", disk)
+        else:
+            if cpu == "":
+                cpu = 100.0
+            if mem == "":
+                mem = 1000.0
+            if disk == "":
+                disk = 1000.0
+            self.db.add_limits(mac, cpu, mem, disk)
         print("in apply")
         self.limit.update_limits(cpu, mem, disk)
 

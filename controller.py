@@ -6,8 +6,8 @@ from model import Process
 from threading import Thread
 
 from pubsub import pub
-
-
+from DB import DB
+import uuid
 import os
 
 ########################################################################
@@ -17,10 +17,11 @@ class ProcThread(Thread):
     """
 
     #----------------------------------------------------------------------
-    def __init__(self,cpu,mem,disk):
-        self.cpu_lim = cpu
-        self.mem_lim = mem
-        self.disk_lim = disk
+    def __init__(self):#,cpu,mem,disk):
+        #self.cpu_lim = cpu
+        #self.mem_lim = mem
+        #self.disk_lim = disk
+        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
         """Constructor"""
         Thread.__init__(self)
         self.start() 
@@ -44,6 +45,7 @@ class ProcThread(Thread):
     #----------------------------------------------------------------------
     def run(self):
         """"""
+        db = DB()
         procs = []
         bad_procs = []
         cpu_percent = 0
@@ -65,13 +67,13 @@ class ProcThread(Thread):
                                    str(disk)
                                    )
                 procs.append(new_proc)
-                print(self.cpu_lim, self.mem_lim, self.disk_lim)
-                if cpu > float(self.cpu_lim):
+                print(db.get_limits_value("cpu",self.mac))
+                if cpu > float(db.get_limits_value("cpu", self.mac)):
                     bad_procs.append(procs.index(new_proc))
-                if mem > float(self.mem_lim):
-                    bad_procs.append(procs.index(new_proc))
-                if disk > float(self.disk_lim):
-                    bad_procs.append(procs.index(new_proc))
+                #if mem > float(self.mem_lim):
+                 #   bad_procs.append(procs.index(new_proc))
+                #if disk > float(self.disk_lim):
+                 #   bad_procs.append(procs.index(new_proc))
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk

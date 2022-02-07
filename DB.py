@@ -43,7 +43,7 @@ class DB:
         # update the db
         self.conn.commit()
 
-    def _mac_exist(self, mac):
+    def mac_exist(self, mac):
         '''
         check if the esername is exist if he is return true if not false
         :param username: the username you want to check
@@ -55,7 +55,7 @@ class DB:
 
         return not len(self.cursor.fetchall()) == 0
 
-    def add_user(self, mac, cpu, mem, disk):
+    def add_limits(self, mac, cpu, mem, disk):
         '''
         add a user to the db
         :param username: the username of the user
@@ -65,7 +65,7 @@ class DB:
 
         retValue = False
 
-        if not self._mac_exist(mac):
+        if not self.mac_exist(mac):
 
             retValue = True
             sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{cpu}', '{mem}', '{disk}')"
@@ -74,17 +74,17 @@ class DB:
             self.conn.commit()
 
         return retValue
-    def delete_user(self,username):
+    def delete_limits(self,mac):
         '''
         delete a user details from the db
         :param username: the username of the user you want to delete
         :return:
         '''
-        sql = f"DELETE FROM {self.tbl_name} WHERE username = '{username}'"
+        sql = f"DELETE FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
         self.cursor.execute(sql)
         # update the db
         self.conn.commit()
-    def update_user_details(self, value_to_update, change, before):
+    def update_limits_details(self, value_to_update, change):
         '''
         update the user details
         :param value_to_update: the detail you wont to update
@@ -92,7 +92,11 @@ class DB:
         :param before: what there was bedore the change
         :return:
         '''
-        sql = f"UPDATE {self.tbl_name} SET {value_to_update} = '{change}' WHERE {value_to_update} = '{before}'"
+        sql = f"UPDATE {self.limits_tbl_name} SET {value_to_update} = '{change}'"
         self.cursor.execute(sql)
         # update the db
         self.conn.commit()
+    def get_limits_value(self, type, mac):
+        sql = f"SELECT {type} FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()
