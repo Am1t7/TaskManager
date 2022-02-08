@@ -1,0 +1,74 @@
+import socket
+import threading
+import select
+
+class server_com():
+    def __init__(self, server_ip, server_port, msg_q):
+
+        self.my_socket = socket.socket()
+        self.server_ip = server_ip
+        self.server_port = server_port
+        self.msg_q = msg_q
+        self.open_clients = {}
+        threading.Thread(target=self._main_loop).start()
+
+
+
+    def _get_ip_by_socket(self, socket):
+        ip = None
+        for soc in self.open_clients.keys():
+            if soc == socket:
+                ip = self.open_clients[soc]
+                break
+        return ip
+
+    def _get_socket_by_ip(self, ip):
+        socket = None
+        for soc in self.open_clients.keys():
+            if self.open_clients[soc] == ip:
+                socket = soc
+                break
+        return socket
+
+
+    def _main_loop(self):
+        self.my_socket.bind((self.server_ip,self.server_port))
+        self.my_socket.listen(3)
+
+        while True:
+
+            rlist, wlist, xlist = select.select(list(self.open_clients.keys()) + [self.my_socket],
+                                                list(self.open_clients.keys()), [], 0.3)
+
+            for current_socket in rlist:
+                if current_socket is self.my_socket:
+                    # new client
+                    client, address = self.my_socket.accept()
+                    print(f'{address[0]} - connected')
+                    self.open_clients[client] = address[0]
+                else:
+                    try:
+                        data_len = current_socket.recv(4).decode()
+                        data = current_socket.recv(data_len).decode()
+                    except Exception as e:
+                        print("server com - main loop" , str(e))
+                        self._disconnect_user(current_socket)
+                    else:
+                        if data != "":
+                            self.msg_q.put((self._get_ip_by_socket(current_socket),data))
+                        else:
+                           self. _disconnect_user(current_socket)
+
+
+
+
+    def _disconnect_user(self, current_socket):
+        pass
+
+    def send_mag(self, ip, msg):
+        soc = self._get_socket_by_ip(ip)
+        if soc:
+            pass
+
+
+

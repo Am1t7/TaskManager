@@ -19,8 +19,13 @@ def build_net_block():
 
 def break_msg(msg):
     code = msg[:2]
-    main_msg  = msg[2:].split(",")
-    msg_tuple = ()
+    main_msg = str(msg[2:]).split(",")
+    msg_lst = []
+    msg_lst.append(code)
+    for m in main_msg:
+        msg_lst.append(m)
+    return msg_lst
+
 
 
 
