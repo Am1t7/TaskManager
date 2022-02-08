@@ -27,6 +27,8 @@ class MainPanel(wx.Panel):
         self.procs = []
         self.bad_procs = []
         self.sort_col = 0
+        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
+        self.db = DB()
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -235,6 +237,7 @@ class LimitsPanel(wx.Panel):
         self.frame = parent
         self.limit = limit_obj
         self.db = DB()
+        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 
         # the main sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -277,32 +280,27 @@ class LimitsPanel(wx.Panel):
         self.Show()
 
     def handle_limits(self, event):
-        mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1])
-        mac = mac.upper()
         # extract username and password
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
-        if self.db.mac_exist(mac):
-            if cpu == "":
-                cpu = 100.0
+        if self.db.mac_exist(self.mac):
+            if cpu != "":
                 self.db.update_limits_details("cpu", cpu)
-            if mem == "":
-                mem = 1000.0
+            if mem != "":
                 self.db.update_limits_details("mem", mem)
-            if disk == "":
-                disk = 1000.0
+            if disk != "":
                 self.db.update_limits_details("disk", disk)
         else:
             if cpu == "":
-                cpu = 100.0
+                cpu = 10000.0
             if mem == "":
-                mem = 1000.0
+                mem = 10000.0
             if disk == "":
-                disk = 1000.0
-            self.db.add_limits(mac, cpu, mem, disk)
+                disk = 10000.0
+            self.db.add_limits(self.mac, cpu, mem, disk)
         print("in apply")
-        self.limit.update_limits(cpu, mem, disk)
+        #self.limit.update_limits(cpu, mem, disk)
 
 
 

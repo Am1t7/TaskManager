@@ -99,4 +99,4 @@ class DB:
     def get_limits_value(self, type, mac):
         sql = f"SELECT {type} FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
         self.cursor.execute(sql)
-        return self.cursor.fetchone()
+        return self.cursor.fetchone()[0]

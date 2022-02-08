@@ -45,13 +45,13 @@ class ProcThread(Thread):
     #----------------------------------------------------------------------
     def run(self):
         """"""
-        db = DB()
         procs = []
         bad_procs = []
         cpu_percent = 0
         mem_percent = 0
         disk_percent = 0
         count = 0
+        db = DB()
         for proc in psutil.process_iter():
             try:
                 p = psutil.Process(proc.pid)
@@ -67,13 +67,12 @@ class ProcThread(Thread):
                                    str(disk)
                                    )
                 procs.append(new_proc)
-                print(db.get_limits_value("cpu",self.mac))
                 if cpu > float(db.get_limits_value("cpu", self.mac)):
                     bad_procs.append(procs.index(new_proc))
-                #if mem > float(self.mem_lim):
-                 #   bad_procs.append(procs.index(new_proc))
-                #if disk > float(self.disk_lim):
-                 #   bad_procs.append(procs.index(new_proc))
+                if mem > float(db.get_limits_value("mem", self.mac)):
+                    bad_procs.append(procs.index(new_proc))
+                if disk > float(db.get_limits_value("disk", self.mac)):
+                    bad_procs.append(procs.index(new_proc))
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk
