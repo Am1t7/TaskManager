@@ -20,7 +20,7 @@ class MainPanel(wx.Panel):
     def __init__(self, parent):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
-        self.limit = Limits()
+        #self.limit = Limits()
         self.frame = parent
         self.currentSelection = None
         self.gui_shown = False
@@ -139,8 +139,8 @@ class MainPanel(wx.Panel):
                 webbrowser.get(chrome_path).open(j)
 
     def onOpenLimit(self,event):
-        frame = LimitsFrame(self.limit)
-        panel = LimitsPanel(self,self.limit)
+        frame = LimitsFrame()
+        panel = LimitsPanel(self)
         '''
         dlg = wx.TextEntryDialog(frame, 'CPU:', 'Set CPU Limit')
         dlg.SetValue("")
@@ -225,20 +225,21 @@ class LimitsFrame(wx.Frame):
     """"""
 
     #----------------------------------------------------------------------
-    def __init__(self, limit_obj):
+    def __init__(self):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
-        panel = LimitsPanel(self,limit_obj)
+        panel = LimitsPanel(self)
 
 
 class LimitsPanel(wx.Panel):
-    def __init__(self, parent, limit_obj):
+    def __init__(self, parent):
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
-        self.limit = limit_obj
         self.db = DB()
         self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 
+        if not self.db.mac_exist(self.mac):
+            self.db.add_limits(self.mac, 10000.0, 10000.0, 10000.0)
         # the main sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL)
 
