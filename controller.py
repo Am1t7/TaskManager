@@ -67,6 +67,7 @@ class ProcThread(Thread):
                                    str(disk)
                                    )
                 procs.append(new_proc)
+                #check limits
                 if cpu > float(db.get_limits_value("cpu", self.mac)):
                     bad_procs.append(procs.index(new_proc))
                 if mem > float(db.get_limits_value("mem", self.mac)):
@@ -77,6 +78,7 @@ class ProcThread(Thread):
                 mem_percent += mem
                 disk_percent += disk
                 count += 1
+
             except Exception as e:
                 print(str(e))
                 pass

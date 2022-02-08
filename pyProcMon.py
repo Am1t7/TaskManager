@@ -97,7 +97,7 @@ class MainPanel(wx.Panel):
 
     def OnPopupItemSelected(self, event):
         item = self.popupmenu.FindItemById(event.GetId())
-        text = item.GetText()
+        text = item.GetItemLabel()
         if text == "Info":
             threading.Thread(target =self.onOpenInfo).start()
         elif text == "End Task":
@@ -227,7 +227,7 @@ class LimitsFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self, limit_obj):
         """Constructor"""
-        wx.Frame.__init__(self, None, title="PyProcMon", size=(400, 400))
+        wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
         panel = LimitsPanel(self,limit_obj)
 
 
@@ -244,25 +244,34 @@ class LimitsPanel(wx.Panel):
 
         # cpu
         cpu_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         cpu_text = wx.StaticText(self, 1, label="CPU:  ")
+        before_cpu = wx.StaticText(self, 1, label=f"CPU limit: {self.db.get_limits_value('cpu', self.mac)}")
         self.cpuField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         cpu_box.Add(cpu_text, 0, wx.ALL, 5)
+        before_cpu_box.Add(before_cpu, 0, wx.ALL, 5)
         cpu_box.Add(self.cpuField, 0, wx.ALL, 5)
 
 
         # mem
         memory_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_memory_box = wx.BoxSizer(wx.HORIZONTAL)
         memory_text = wx.StaticText(self, 1, label="Memory: ")
+        before_mem = wx.StaticText(self, 1, label=f"Memory limit: {self.db.get_limits_value('mem', self.mac)}")
         self.memField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         memory_box.Add(memory_text, 0, wx.ALL, 5)
+        before_memory_box.Add(before_mem,0,wx.ALL,5)
         memory_box.Add(self.memField, 0, wx.ALL, 5)
 
         # disk
         disk_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_disk_box = wx.BoxSizer(wx.HORIZONTAL)
         disk_text = wx.StaticText(self, 1, label="Disk: ")
+        before_disk = wx.StaticText(self, 1, label=f"Disk limit: {self.db.get_limits_value('disk', self.mac)}")
         self.diskField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         disk_box.Add(disk_text, 0, wx.ALL, 5)
         disk_box.Add(self.diskField, 0, wx.ALL, 5)
+        before_disk_box.Add(before_disk,0,wx.ALL,5)
 
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
         applyBtn = wx.Button(self, wx.ID_ANY, label="Apply",size = (200, 60))
@@ -270,8 +279,11 @@ class LimitsPanel(wx.Panel):
         btnBox.Add(applyBtn, 0, wx.ALL, 5)
 
         b_sizer.Add(cpu_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_cpu_box,0,wx.CENTER | wx.ALL,5)
         b_sizer.Add(memory_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_memory_box,0,wx.CENTER | wx.ALL,5)
         b_sizer.Add(disk_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_disk_box,0,wx.CENTER | wx.ALL,5)
         b_sizer.AddSpacer(30)
         b_sizer.Add(btnBox, wx.CENTER | wx.ALL, 5)
 
@@ -280,10 +292,11 @@ class LimitsPanel(wx.Panel):
         self.Show()
 
     def handle_limits(self, event):
-        # extract username and password
+        # extract limits
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
+        #put in the database
         if self.db.mac_exist(self.mac):
             if cpu != "":
                 self.db.update_limits_details("cpu", cpu)
@@ -299,8 +312,7 @@ class LimitsPanel(wx.Panel):
             if disk == "":
                 disk = 10000.0
             self.db.add_limits(self.mac, cpu, mem, disk)
-        print("in apply")
-        #self.limit.update_limits(cpu, mem, disk)
+        self.frame.Close()
 
 
 
