@@ -14,6 +14,8 @@ import threading
 def main_loop():
     while True:
         data = msg_q.get()
+        msg = client_pro.break_msg(data)
+
 
 
 msg_q = queue.Queue()
