@@ -6,7 +6,7 @@ from model import Process
 from threading import Thread
 
 from pubsub import pub
-from DB import DB
+from clientDB import DB
 import uuid
 import os
 
@@ -68,11 +68,11 @@ class ProcThread(Thread):
                                    )
                 procs.append(new_proc)
                 #check limits
-                if cpu > float(db.get_limits_value("cpu", self.mac)):
+                if cpu > float(db.get_cpu_limits_value()):
                     bad_procs.append(procs.index(new_proc))
-                if mem > float(db.get_limits_value("mem", self.mac)):
+                if mem > float(db.get_mem_limits_value()):
                     bad_procs.append(procs.index(new_proc))
-                if disk > float(db.get_limits_value("disk", self.mac)):
+                if disk > float(db.get_disk_limits_value()):
                     bad_procs.append(procs.index(new_proc))
                 cpu_percent += cpu
                 mem_percent += mem

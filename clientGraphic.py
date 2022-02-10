@@ -6,9 +6,8 @@ from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 import webbrowser
 from googlesearch import search
-from limits import Limits
-from DB import DB
-import uuid
+from clientDB import DB
+
 
 
 ########################################################################
@@ -27,8 +26,6 @@ class MainPanel(wx.Panel):
         self.procs = []
         self.bad_procs = []
         self.sort_col = 0
-        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
-        self.db = DB()
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -236,10 +233,6 @@ class LimitsPanel(wx.Panel):
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
         self.db = DB()
-        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
-
-        if not self.db.mac_exist(self.mac):
-            self.db.add_limits(self.mac, 10000.0, 10000.0, 10000.0)
         # the main sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -247,7 +240,7 @@ class LimitsPanel(wx.Panel):
         cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         before_cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         cpu_text = wx.StaticText(self, 1, label="CPU:  ")
-        before_cpu = wx.StaticText(self, 1, label=f"CPU limit: {self.db.get_limits_value('cpu', self.mac)}")
+        before_cpu = wx.StaticText(self, 1, label=f"CPU limit: {self.db.get_cpu_limits_value()}")
         self.cpuField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         cpu_box.Add(cpu_text, 0, wx.ALL, 5)
         before_cpu_box.Add(before_cpu, 0, wx.ALL, 5)
@@ -258,7 +251,7 @@ class LimitsPanel(wx.Panel):
         memory_box = wx.BoxSizer(wx.HORIZONTAL)
         before_memory_box = wx.BoxSizer(wx.HORIZONTAL)
         memory_text = wx.StaticText(self, 1, label="Memory: ")
-        before_mem = wx.StaticText(self, 1, label=f"Memory limit: {self.db.get_limits_value('mem', self.mac)}")
+        before_mem = wx.StaticText(self, 1, label=f"Memory limit: {self.db.get_mem_limits_value()}")
         self.memField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         memory_box.Add(memory_text, 0, wx.ALL, 5)
         before_memory_box.Add(before_mem,0,wx.ALL,5)
@@ -268,7 +261,7 @@ class LimitsPanel(wx.Panel):
         disk_box = wx.BoxSizer(wx.HORIZONTAL)
         before_disk_box = wx.BoxSizer(wx.HORIZONTAL)
         disk_text = wx.StaticText(self, 1, label="Disk: ")
-        before_disk = wx.StaticText(self, 1, label=f"Disk limit: {self.db.get_limits_value('disk', self.mac)}")
+        before_disk = wx.StaticText(self, 1, label=f"Disk limit: {self.db.get_disk_limits_value()}")
         self.diskField = wx.TextCtrl(self, -1, name="",size=(150, -1))
         disk_box.Add(disk_text, 0, wx.ALL, 5)
         disk_box.Add(self.diskField, 0, wx.ALL, 5)
@@ -297,6 +290,14 @@ class LimitsPanel(wx.Panel):
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
+
+        if cpu != "":
+            self.db.update_cpu_value(cpu)
+        if mem != "":
+            self.db.update_mem_value(mem)
+        if disk != "":
+            self.db.update_disk_value((disk))
+        '''
         #put in the database
         if self.db.mac_exist(self.mac):
             if cpu != "":
@@ -313,6 +314,7 @@ class LimitsPanel(wx.Panel):
             if disk == "":
                 disk = 10000.0
             self.db.add_limits(self.mac, cpu, mem, disk)
+        '''
         self.frame.Close()
 
 

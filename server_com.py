@@ -15,6 +15,11 @@ class server_com():
 
 
     def _get_ip_by_socket(self, socket):
+        '''
+
+        :param socket: the client socket
+        :return: the ip that adressed to this socket
+        '''
         ip = None
         for soc in self.open_clients.keys():
             if soc == socket:
@@ -37,8 +42,7 @@ class server_com():
 
         while True:
 
-            rlist, wlist, xlist = select.select(list(self.open_clients.keys()) + [self.my_socket],
-                                                list(self.open_clients.keys()), [], 0.3)
+            rlist, wlist, xlist = select.select(list(self.open_clients.keys()) + [self.my_socket], list(self.open_clients.keys()), [], 0.3)
 
             for current_socket in rlist:
                 if current_socket is self.my_socket:
@@ -71,7 +75,7 @@ class server_com():
         soc = self._get_socket_by_ip(ip)
         if soc:
             try:
-                soc.send(str(len(msg)).encode())
+                soc.send((str(len(msg)).zfill(4)).encode())
                 soc.send(str(msg).encode())
             except Exception as e:
                 print("serv_com send msg: ",str(e))
