@@ -63,12 +63,21 @@ class server_com():
 
 
     def _disconnect_user(self, current_socket):
-        pass
+        print(f"{self.open_clients[current_socket]} - disconnected")
+        del self.open_clients[current_socket]
+        current_socket.close()
 
     def send_mag(self, ip, msg):
         soc = self._get_socket_by_ip(ip)
         if soc:
-            pass
+            try:
+                soc.send(str(len(msg)).encode())
+                soc.send(str(msg).encode())
+            except Exception as e:
+                print("serv_com send msg: ",str(e))
+                pass
+
+
 
 
 
