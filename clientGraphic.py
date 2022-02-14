@@ -55,17 +55,8 @@ class MainPanel(wx.Panel):
 
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        #endProcBtn = wx.Button(self, label="End Process")
-        #endProcBtn.Bind(wx.EVT_BUTTON, self.onKillProc)
-
-        #infoProcBtn = wx.Button(self, label = "Info")
-        #infoProcBtn.Bind(wx.EVT_BUTTON, self.onOpenInfo)
-
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
-
-        #button_sizer.Add(endProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
-        #button_sizer.Add(infoProcBtn, 0, wx.ALIGN_LEFT | wx.ALL, 0)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
@@ -297,24 +288,6 @@ class LimitsPanel(wx.Panel):
             self.db.update_mem_value(mem)
         if disk != "":
             self.db.update_disk_value((disk))
-        '''
-        #put in the database
-        if self.db.mac_exist(self.mac):
-            if cpu != "":
-                self.db.update_limits_details("cpu", cpu)
-            if mem != "":
-                self.db.update_limits_details("mem", mem)
-            if disk != "":
-                self.db.update_limits_details("disk", disk)
-        else:
-            if cpu == "":
-                cpu = 10000.0
-            if mem == "":
-                mem = 10000.0
-            if disk == "":
-                disk = 10000.0
-            self.db.add_limits(self.mac, cpu, mem, disk)
-        '''
         self.frame.Close()
 
 
