@@ -1,6 +1,7 @@
 import socket
 import threading
 import uuid
+import client_pro
 
 
 class Client_com():
@@ -20,7 +21,7 @@ class Client_com():
         while not server_on:
             try:
                 self.my_socket.connect((self.server_ip, self.server_port))
-                #self.send(self.mac)
+                self.send(client_pro.build_mac(self.mac))
             except Exception as e:
                 print("connect error: ",str(e))
                 pass

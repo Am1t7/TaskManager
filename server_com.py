@@ -52,11 +52,11 @@ class server_com():
                     client, address = self.my_socket.accept()
                     print(f'{address[0]} - connected')
                     self.open_clients[client] = address[0]
-                    wx.CallAfter(pub.sendMessage, 'add')
+
                 else:
                     try:
                         data_len = current_socket.recv(4).decode()
-                        data = current_socket.recv(data_len).decode()
+                        data = current_socket.recv(int(data_len)).decode()
                     except Exception as e:
                         print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)

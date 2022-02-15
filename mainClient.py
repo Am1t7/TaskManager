@@ -11,10 +11,13 @@ import threading
 
 
 
-def main_loop():
+def main_loop(msg_q, comm):
     while True:
         data = msg_q.get()
         msg = client_pro.break_msg(data)
+
+        print("client recv ---------------------------",msg)
+
 
 
 

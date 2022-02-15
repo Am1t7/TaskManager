@@ -135,7 +135,7 @@ class PcPanel(wx.Panel):
         self.frame = parent
 
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
+        self.pc_box = wx.BoxSizer(wx.VERTICAL)
         self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
         self.pcImg.Rescale(100, 100)
         self.pcBmp = wx.Bitmap(self.pcImg)
@@ -147,19 +147,30 @@ class PcPanel(wx.Panel):
         pub.subscribe(self.del_pc, 'del')
 
 
+        self.macBox = wx.BoxSizer(wx.HORIZONTAL)
+        self.macText = None
+
+        self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
         self.SetSizer(self.mainSizer)
         self.Layout()
         self.Hide()
 
 
-    def add_pc(self):
+    def add_pc(self, mac):
         self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
         self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+        self.macText = wx.StaticText(self, -1, str(mac))
+        font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.macText.SetFont(font)
 
-        self.pc_box.Add(self.pcBtn, 0, wx.ALIGN_LEFT, 5)
+        self.macBox.Add(self.macText, 0, wx.ALL, 5)
+
+        self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
 
         self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+        self.mainSizer.AddSpacer(10)
+        self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
 
     def del_pc(self):
         self.pc_box.Hide(self.pcBtn)
