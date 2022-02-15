@@ -134,23 +134,36 @@ class PcPanel(wx.Panel):
         wx.Panel.__init__(self, parent, size=(1024, 768))
         self.frame = parent
 
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
-        pc_box = wx.BoxSizer(wx.HORIZONTAL)
-        pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
-        pcImg.Rescale(100, 100)
-        pcBmp = wx.Bitmap(pcImg)
-        pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=pcBmp, size=wx.DefaultSize)
-        pcBtn.SetWindowStyleFlag(wx.NO_BORDER)
-        pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+        self.mainSizer = wx.BoxSizer(wx.VERTICAL)
+        self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
+        self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
+        self.pcImg.Rescale(100, 100)
+        self.pcBmp = wx.Bitmap(self.pcImg)
+        self.pcBtn = None
 
-        pc_box.Add(pcBtn, 0, wx.ALIGN_LEFT, 5)
+        self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
 
-        mainSizer.Add(pc_box, 0, wx.LEFT, 5)
+        pub.subscribe(self.add_pc, 'add')
+        pub.subscribe(self.del_pc, 'del')
 
 
-        self.SetSizer(mainSizer)
+        self.SetSizer(self.mainSizer)
         self.Layout()
         self.Hide()
+
+
+    def add_pc(self):
+        self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
+        self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+
+        self.pc_box.Add(self.pcBtn, 0, wx.ALIGN_LEFT, 5)
+
+
+        self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+
+    def del_pc(self):
+        self.pc_box.Hide(self.pcBtn)
+        self.pc_box.Detach(self.pcBtn)
 
 
 

@@ -1,6 +1,8 @@
 import socket
 import threading
 import select
+import wx
+from pubsub import pub
 
 class server_com():
     def __init__(self, server_ip, server_port, msg_q):
@@ -50,6 +52,7 @@ class server_com():
                     client, address = self.my_socket.accept()
                     print(f'{address[0]} - connected')
                     self.open_clients[client] = address[0]
+                    wx.CallAfter(pub.sendMessage, 'add')
                 else:
                     try:
                         data_len = current_socket.recv(4).decode()
@@ -61,7 +64,7 @@ class server_com():
                         if data != "":
                             self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         else:
-                           self. _disconnect_user(current_socket)
+                            self._disconnect_user(current_socket)
 
 
 
@@ -70,8 +73,9 @@ class server_com():
         print(f"{self.open_clients[current_socket]} - disconnected")
         del self.open_clients[current_socket]
         current_socket.close()
+        wx.CallAfter(pub.sendMessage, 'del')
 
-    def send_mag(self, ip, msg):
+    def send_msg(self, ip, msg):
         soc = self._get_socket_by_ip(ip)
         if soc:
             try:
@@ -80,6 +84,7 @@ class server_com():
             except Exception as e:
                 print("serv_com send msg: ",str(e))
                 pass
+
 
 
 

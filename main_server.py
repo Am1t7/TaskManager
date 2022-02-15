@@ -13,7 +13,7 @@ import threading
 
 def main_loop():
     while True:
-        data = msg_q.get()
+        data = server_com.server_com.get_msg_q().get()
         msg = server_pro.break_msg(data)
 
 
