@@ -310,7 +310,6 @@ class MainFrame(wx.Frame):
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
 
         # create a pubsub receiver
-        #Publisher().subscribe(self.updateStatusbar, "update_status")
         pub.subscribe(self.updateStatusbar ,'update_status')
         
         self.Show()

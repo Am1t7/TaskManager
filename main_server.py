@@ -16,9 +16,10 @@ def main_loop(msg_q, comm):
         data = msg_q.get()
         msg = server_pro.break_msg(data)
 
-
         if msg[0] == "02":
             wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]))
+        elif msg[0] == "01":
+            pass
 
         print("------------------------------------",msg)
 

@@ -5,6 +5,9 @@ import wx
 from pubsub import pub
 
 class server_com():
+    '''
+    constructor
+    '''
     def __init__(self, server_ip, server_port, msg_q):
 
         self.my_socket = socket.socket()
@@ -20,7 +23,7 @@ class server_com():
         '''
 
         :param socket: the client socket
-        :return: the ip that adressed to this socket
+        :return: the ip that addressed to this socket
         '''
         ip = None
         for soc in self.open_clients.keys():
@@ -30,6 +33,11 @@ class server_com():
         return ip
 
     def _get_socket_by_ip(self, ip):
+        '''
+
+        :param ip: the client ip
+        :return: the socket that addressed to this ip
+        '''
         socket = None
         for soc in self.open_clients.keys():
             if self.open_clients[soc] == ip:
@@ -39,6 +47,10 @@ class server_com():
 
 
     def _main_loop(self):
+        '''
+        the main loop that recv msg and put it in the q and handles the clients
+        :return:
+        '''
         self.my_socket.bind((self.server_ip,self.server_port))
         self.my_socket.listen(3)
 
@@ -55,6 +67,7 @@ class server_com():
 
                 else:
                     try:
+                        #recv data
                         data_len = current_socket.recv(4).decode()
                         data = current_socket.recv(int(data_len)).decode()
                     except Exception as e:
@@ -62,6 +75,7 @@ class server_com():
                         self._disconnect_user(current_socket)
                     else:
                         if data != "":
+                            #put in q
                             self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         else:
                             self._disconnect_user(current_socket)

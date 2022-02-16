@@ -112,11 +112,6 @@ class LoginPanel(wx.Panel):
 
 
     def handle_login(self, event):
-        """
-
-        :return: extracts the username and password from the fields upon pressing "login" and sends to server
-        """
-
         # extract username and password
         username = self.userField.GetValue()
         password = self.passField.GetValue()
@@ -141,40 +136,55 @@ class PcPanel(wx.Panel):
         self.pcBmp = wx.Bitmap(self.pcImg)
         self.pcBtn = None
 
-        self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+
+        self.macBox = wx.BoxSizer(wx.VERTICAL)
+        self.macText = None
+
+        #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+        #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
 
         pub.subscribe(self.add_pc, 'add')
         pub.subscribe(self.del_pc, 'del')
 
-
-        self.macBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.macText = None
-
-        self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
         self.SetSizer(self.mainSizer)
         self.Layout()
         self.Hide()
 
 
     def add_pc(self, mac):
+        '''
+        adding pc to the connected pc view
+        :param mac: the mac address of the pc
+        :return:
+        '''
+        #creating the pc logo button
         self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
         self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+        #create the text with the mac address
         self.macText = wx.StaticText(self, -1, str(mac))
         font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.macText.SetFont(font)
 
+        #adding to the sizers
         self.macBox.Add(self.macText, 0, wx.ALL, 5)
 
         self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
-
+        #adding to the main sizer
         self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-        self.mainSizer.AddSpacer(10)
         self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
 
+        self.mainSizer.Layout()
+
     def del_pc(self):
+        '''
+        deleting a pc from the connecting pc
+        :return:
+        '''
         self.pc_box.Hide(self.pcBtn)
         self.pc_box.Detach(self.pcBtn)
+        self.macBox.Hide(self.macText)
+        self.macBox.Detach(self.macText)
 
 
 

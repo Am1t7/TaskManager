@@ -80,7 +80,6 @@ class ProcThread(Thread):
                 count += 1
 
             except Exception as e:
-                print(str(e))
                 pass
 
 
