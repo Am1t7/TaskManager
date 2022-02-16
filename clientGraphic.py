@@ -16,7 +16,7 @@ class MainPanel(wx.Panel):
     """"""
 
     #----------------------------------------------------------------------
-    def __init__(self, parent):
+    def __init__(self, parent, send_q):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
         #self.limit = Limits()
@@ -26,6 +26,7 @@ class MainPanel(wx.Panel):
         self.procs = []
         self.bad_procs = []
         self.sort_col = 0
+        self.q = send_q
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -205,6 +206,8 @@ class MainPanel(wx.Panel):
         self.procs = procs
         self.bad_procs = bad_procs
         self.setProcs()
+
+        self.q.put(procs)
         if not self.timer.IsRunning():
             self.timer.Start(15000)
 
@@ -299,10 +302,10 @@ class MainFrame(wx.Frame):
     """"""
 
     #----------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title="PyProcMon", size=(1024, 768))
-        panel = MainPanel(self)
+        panel = MainPanel(self, send_q)
         
         # set up the statusbar
         self.CreateStatusBar()

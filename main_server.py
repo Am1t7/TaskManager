@@ -6,10 +6,15 @@ import setting
 import wx
 import threading
 from pubsub import pub
+import setting
 
 
 
 
+used_port = [setting.SERVER_PORT]
+
+def get_port():
+    pass
 
 def main_loop(msg_q, comm):
     while True:
@@ -18,6 +23,11 @@ def main_loop(msg_q, comm):
 
         if msg[0] == "02":
             wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]))
+            port = get_port()
+            comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
+            #build...(port)
+            # sne msg
+
         elif msg[0] == "01":
             pass
 

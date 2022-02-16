@@ -46,7 +46,7 @@ class Client_com():
                 server_on = False
             else:
                 #put in q
-                self.msg_q.put((self.mac, data))
+                self.msg_q.put( data)
 
     def send(self, msg):
         '''
