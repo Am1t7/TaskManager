@@ -206,7 +206,6 @@ class MainPanel(wx.Panel):
         self.procs = procs
         self.bad_procs = bad_procs
         self.setProcs()
-
         self.q.put(procs)
         if not self.timer.IsRunning():
             self.timer.Start(15000)

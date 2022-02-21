@@ -1,8 +1,11 @@
 import wx
 from pubsub import pub
 from serverDB import DB
-
-
+from ObjectListView import ObjectListView, ColumnDefn
+import threading
+import psutil
+import webbrowser
+from googlesearch import search
 
 class ServerFrame(wx.Frame):
     def __init__(self,parent=None):
@@ -199,6 +202,180 @@ class TaskPanel(wx.Panel):
         """Constructor"""
         wx.Panel.__init__(self, parent, size=(1024, 768))
         self.frame = parent
+        self.currentSelection = None
+        self.gui_shown = False
+        self.procs = []
+        self.bad_procs = []
+        self.sort_col = 0
+
+        self.col_w = {"name":175,
+                      "pid":50,
+                      "exe":300,
+                      "user":175,
+                      "cpu":60,
+                      "mem":75,
+                      "disk":75}
+
+        self.procmonOlv = ObjectListView(self, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.procmonOlv.Bind(wx.EVT_LIST_COL_CLICK, self.onColClick)
+        self.procmonOlv.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onSelect)
+        #self.procmonOlv.Select
+
+        #pop up menu
+        self.popupmenu = wx.Menu()
+        for text in "Info,End Task".split(","):
+            item = self.popupmenu.Append(-1, text)
+            self.Bind(wx.EVT_MENU, self.OnPopupItemSelected, item)
+        self.procmonOlv.Bind(wx.EVT_CONTEXT_MENU, self.OnShowPopup)
+
+
+
+        self.procmonOlv.EnableSorting()
+
+        self.setProcs()
+
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        #limitProcBtn = wx.Button(self, label = "Set Limits")
+        #limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
+        #button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
+
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
+        mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
+
+        self.SetSizer(mainSizer)
+
+        # check for updates every 15 seconds
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update, self.timer)
+        self.update("")
+        self.setProcs()
+
+        pub.subscribe(self.updateDisplay_server, 'update_server')
+        #self.procmonOlv.Show()
+        self.Layout()
+        self.Hide()
+        # ----------------------------------------------------------------------
+
+    def OnShowPopup(self, event):
+        pos = event.GetPosition()
+        pos = self.procmonOlv.ScreenToClient(pos)
+        self.procmonOlv.PopupMenu(self.popupmenu, pos)
+
+    def OnPopupItemSelected(self, event):
+        item = self.popupmenu.FindItemById(event.GetId())
+        text = item.GetItemLabel()
+        if text == "Info":
+            threading.Thread(target=self.onOpenInfo).start()
+        elif text == "End Task":
+            self.onKillProc()
+
+    def onColClick(self, event):
+        """
+        Remember which column to sort by, currently only does ascending
+        """
+        self.sort_col = event.GetColumn()
+
+        # ----------------------------------------------------------------------
+
+    def onKillProc(self):
+        """
+        Kill the selected process by pid
+        """
+        obj = self.procmonOlv.GetSelectedObject()
+        try:
+            pid = int(obj.pid)
+            p = psutil.Process(pid)
+            p.terminate()
+            self.update("")
+        except Exception as e:
+            pass
+
+    def onOpenInfo(self):
+        global chrome_path
+        obj = self.procmonOlv.GetSelectedObject()
+        try:
+            name = obj.name
+        except Exception as e:
+            pass
+        else:
+            # to search
+            query = name
+            for j in search(query, tld="co.in", num=1, stop=1, pause=2):
+                webbrowser.get(chrome_path).open(j)
+
+
+    def onSelect(self, event):
+        """
+        Gets called when an item is selected and helps keep track of
+        what item is selected
+        """
+        item = event.GetItem()
+        itemId = item.GetId()
+        self.currentSelection = itemId
+
+    #----------------------------------------------------------------------
+    def setProcs(self):
+        """
+        Updates the ObjectListView widget display
+        """
+        cw = self.col_w
+        # change column widths as necessary
+        if self.gui_shown:
+            cw["name"] = self.procmonOlv.GetColumnWidth(0)
+            cw["pid"] = self.procmonOlv.GetColumnWidth(1)
+            cw["exe"] = self.procmonOlv.GetColumnWidth(2)
+            cw["user"] = self.procmonOlv.GetColumnWidth(3)
+            cw["cpu"] = self.procmonOlv.GetColumnWidth(4)
+            cw["mem"] = self.procmonOlv.GetColumnWidth(5)
+            cw["disk"] = self.procmonOlv.GetColumnWidth(6)
+
+        cols = [
+            ColumnDefn("name", "left", cw["name"], "name"),
+            ColumnDefn("pid", "left", cw["pid"], "pid"),
+            ColumnDefn("exe location", "left", cw["exe"], "exe"),
+            ColumnDefn("username", "left", cw["user"], "user"),
+            ColumnDefn("cpu", "left", cw["cpu"], "cpu"),
+            ColumnDefn("mem", "left", cw["mem"], "mem"),
+            ColumnDefn("disk", "left", cw["disk"], "disk")
+            #ColumnDefn("description", "left", 200, "desc")
+            ]
+        self.procmonOlv.SetColumns(cols)
+        self.procmonOlv.SetObjects(self.procs)
+        #self.procmonOlv.SortBy(self.sort_col)
+        if self.currentSelection:
+            self.procmonOlv.Select(self.currentSelection)
+            self.procmonOlv.SetFocus()
+
+        for i in self.bad_procs:
+            self.procmonOlv.SetItemTextColour(i, wx.RED)
+            self.procmonOlv.Refresh()
+        self.procmonOlv.SortBy(self.sort_col)
+        self.gui_shown = True
+
+    #----------------------------------------------------------------------
+    def update(self, event):
+        """
+        Start a thread to get the pid information
+        """
+        print ("update thread started!")
+        self.timer.Stop()
+        #controller.ProcThread()
+
+    #----------------------------------------------------------------------
+    def updateDisplay_server(self, procs):#, bad_procs):
+        """
+        Catches the pubsub message from the thread and updates the display
+        """
+        print ("thread done, updating display!")
+        self.procs = procs
+        #self.bad_procs = bad_procs
+        self.setProcs()
+        #self.q.put(procs)
+        if not self.timer.IsRunning():
+            self.timer.Start(15000)
 
 
 
