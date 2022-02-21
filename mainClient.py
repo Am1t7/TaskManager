@@ -5,6 +5,7 @@ import queue
 import setting
 import wx
 import threading
+import time
 
 
 
@@ -15,6 +16,7 @@ def handle_sending_msgs(msg_q, comm):
         procs = msg_q.get()
         for p in procs:
             comm.send(client_pro.build_proc(p.name, p.pid, p.exe, p.name, p.cpu, p.mem, p.disk))
+        #time.sleep(10)
         #comm.send(str(procs[0].name))
         # jeson
         # build protocol

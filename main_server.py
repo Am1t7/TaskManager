@@ -8,6 +8,7 @@ import threading
 from pubsub import pub
 import setting
 import random
+from model import Process
 
 
 
@@ -34,7 +35,9 @@ def main_loop(msg_q, comm):
             # sne msg
 
         elif msg[0] == "01":
-            procs.append(msg[1])
+            procs.append((msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]))
+            #proc = msg[1].split(",")
+            #print(proc)
             if msg_q.empty():
                 wx.CallAfter(pub.sendMessage, 'update_server', procs = procs)
 

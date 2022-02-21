@@ -245,7 +245,7 @@ class TaskPanel(wx.Panel):
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
-        self.SetSizer(mainSizer)
+       # self.SetSizer(mainSizer)
 
         # check for updates every 15 seconds
         self.timer = wx.Timer(self)
@@ -255,8 +255,14 @@ class TaskPanel(wx.Panel):
 
         pub.subscribe(self.updateDisplay_server, 'update_server')
         #self.procmonOlv.Show()
+        #self.Layout()
+        #self.Hide()
+        self.SetSizer(mainSizer)
         self.Layout()
         self.Hide()
+
+        #self.procmonOlv.Show()
+        #self.Show()
         # ----------------------------------------------------------------------
 
     def OnShowPopup(self, event):
@@ -352,7 +358,7 @@ class TaskPanel(wx.Panel):
         for i in self.bad_procs:
             self.procmonOlv.SetItemTextColour(i, wx.RED)
             self.procmonOlv.Refresh()
-        self.procmonOlv.SortBy(self.sort_col)
+        #self.procmonOlv.SortBy(self.sort_col)
         self.gui_shown = True
 
     #----------------------------------------------------------------------
