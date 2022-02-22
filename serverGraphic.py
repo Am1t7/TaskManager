@@ -294,6 +294,7 @@ class TaskPanel(wx.Panel):
         Kill the selected process by pid
         """
 
+
         '''
         obj = self.procmonOlv.GetSelectedObject()
         try:
