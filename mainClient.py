@@ -15,7 +15,9 @@ def handle_sending_msgs(msg_q, comm):
     while True:
         procs = msg_q.get()
         for p in procs:
+
             comm.send(client_pro.build_proc(p.name, p.pid, p.exe, p.name, p.cpu, p.mem, p.disk))
+        comm.send(client_pro.build_done())
         #time.sleep(10)
         #comm.send(str(procs[0].name))
         # jeson

@@ -7,6 +7,9 @@ import psutil
 import webbrowser
 from googlesearch import search
 
+
+chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+
 class ServerFrame(wx.Frame):
     def __init__(self,parent=None):
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
@@ -290,6 +293,8 @@ class TaskPanel(wx.Panel):
         """
         Kill the selected process by pid
         """
+
+        '''
         obj = self.procmonOlv.GetSelectedObject()
         try:
             pid = int(obj.pid)
@@ -298,6 +303,7 @@ class TaskPanel(wx.Panel):
             self.update("")
         except Exception as e:
             pass
+        '''
 
     def onOpenInfo(self):
         global chrome_path

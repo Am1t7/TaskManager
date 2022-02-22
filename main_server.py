@@ -23,6 +23,7 @@ def get_port():
     return port
 
 def main_loop(msg_q, comm):
+    global procs
     while True:
         data = msg_q.get()
         msg = server_pro.break_msg(data)
@@ -35,11 +36,13 @@ def main_loop(msg_q, comm):
             # sne msg
 
         elif msg[0] == "01":
-            procs.append((msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]))
+            procs.append(Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]))
             #proc = msg[1].split(",")
             #print(proc)
-            if msg_q.empty():
-                wx.CallAfter(pub.sendMessage, 'update_server', procs = procs)
+
+        elif msg[0] == "03":
+            wx.CallAfter(pub.sendMessage, 'update_server', procs = procs)
+            procs = []
 
 
         print("------------------------------------",msg)

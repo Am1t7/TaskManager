@@ -13,6 +13,9 @@ def build_response(func_code, type):
     return f'{func_code}{type}'
 
 
+def build_done():
+    return f'03done'
+
 def break_msg(msg):
     code = msg[1][:2]
     main_msg = str(msg[1][2:]).split(",")

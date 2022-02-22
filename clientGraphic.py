@@ -7,7 +7,7 @@ from pubsub import pub
 import webbrowser
 from googlesearch import search
 from clientDB import DB
-
+import client_pro
 
 
 ########################################################################
@@ -207,6 +207,7 @@ class MainPanel(wx.Panel):
         self.bad_procs = bad_procs
         self.setProcs()
         self.q.put(procs)
+        #self.q.put(client_pro.build_done())
         if not self.timer.IsRunning():
             self.timer.Start(15000)
 
