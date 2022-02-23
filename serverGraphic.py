@@ -6,18 +6,19 @@ import threading
 import psutil
 import webbrowser
 from googlesearch import search
+import server_pro
 
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
 class ServerFrame(wx.Frame):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,send_q=None):
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         # create status bar
         self.CreateStatusBar()
 
         # creating the main panel
-        main_panel = MainPanel(self)
+        main_panel = MainPanel(self,send_q)
         box = wx.BoxSizer(wx.VERTICAL)
         box.Add(main_panel, 1, wx.EXPAND)
 
@@ -49,10 +50,10 @@ class TaskFrame(wx.Frame):
     """"""
 
     #----------------------------------------------------------------------
-    def __init__(self, mac):
+    def __init__(self, mac, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title=mac, size=(1024, 768))
-        panel = TaskPanel(self)
+        panel = TaskPanel(self, send_q)
 
         self.CreateStatusBar()
         self.StatusBar.SetFieldsCount(4)
@@ -80,7 +81,7 @@ class TaskFrame(wx.Frame):
 
 
 class MainPanel(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, send_q):
         #wx.Panel.__init__(self, parent=parent)
         wx.Panel.__init__(self, parent, size=(1024, 768))
 
@@ -90,8 +91,8 @@ class MainPanel(wx.Panel):
 
         # creating all the screen panels
         self.login = LoginPanel(self)
-        self.pc = PcPanel(self)
-        self.task = TaskPanel(self)
+        self.pc = PcPanel(self, send_q)
+        self.task = TaskPanel(self, send_q)
         #self.stations = StationsPanel(self, self.frame)
 
         # adding all the screen panels to the sizers
@@ -180,7 +181,7 @@ class LoginPanel(wx.Panel):
 
 
 class PcPanel(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, send_q):
         """Constructor"""
         wx.Panel.__init__(self, parent, size=(1024, 768))
         self.frame = parent
@@ -195,6 +196,7 @@ class PcPanel(wx.Panel):
 
         self.macBox = wx.BoxSizer(wx.VERTICAL)
         self.macText = None
+        self.q = send_q
 
         #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
         #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
@@ -249,14 +251,14 @@ class PcPanel(wx.Panel):
     def handle_pc(self, event):
         #self.Hide()
         #self.frame.task.Show()
-        frame = TaskFrame(self.mac_string)
-        panel = TaskPanel(self)
+        frame = TaskFrame(self.mac_string, self.q)
+        panel = TaskPanel(self, self.q)
         frame.Show()
 
 
 
 class TaskPanel(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, send_q):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
@@ -265,6 +267,7 @@ class TaskPanel(wx.Panel):
         self.procs = []
         self.bad_procs = []
         self.sort_col = 0
+        self.q = send_q
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -348,7 +351,8 @@ class TaskPanel(wx.Panel):
         """
         Kill the selected process by pid
         """
-
+        obj = self.procmonOlv.GetSelectedObject()
+        self.q.put(server_pro.build_close_proc(obj.pid))
 
         '''
         obj = self.procmonOlv.GetSelectedObject()

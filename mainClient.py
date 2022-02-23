@@ -5,7 +5,7 @@ import queue
 import setting
 import wx
 import threading
-import time
+from pubsub import pub
 
 
 
@@ -31,6 +31,10 @@ def main_loop(msg_q):
     while True:
         data = msg_q.get()
         msg = client_pro.break_msg(data)
+
+
+        if msg[0] == "03":
+            wx.CallAfter(pub.sendMessage, 'kill', pid=int(msg[1]))
 
         # if  create client
         # break -> port

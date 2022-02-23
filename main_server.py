@@ -22,6 +22,13 @@ def get_port():
     used_port.append(port)
     return port
 
+def handle_sending_msgs(msg_q, comm):
+    while True:
+        data_send = msg_q.get()
+        print(data_send)
+        #send_msg = server_pro.break_msg(data_send)
+        comm.send_msg('127.0.0.1', str(data_send))
+
 def main_loop(msg_q, comm):
     global procs
     cpu_percent = 0
@@ -66,10 +73,11 @@ def main_loop(msg_q, comm):
 
 
 msg_q = queue.Queue()
+send_msg_q = queue.Queue()
 comm = server_com.server_com(setting.SERVER_IP,setting.SERVER_PORT,msg_q)
 threading.Thread(target=main_loop, args=(msg_q,comm,)).start()
-
+threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()
 
 app = wx.App(False)
-frame = serverGraphic.ServerFrame()
+frame = serverGraphic.ServerFrame(send_q=send_msg_q)
 app.MainLoop()

@@ -77,6 +77,8 @@ class MainPanel(wx.Panel):
 
         # create a pubsub receiver
         pub.subscribe(self.updateDisplay ,'update')
+        pub.subscribe(self.on_kill_proc_server, 'kill')
+
 
     #----------------------------------------------------------------------
     def OnShowPopup(self, event):
@@ -112,7 +114,13 @@ class MainPanel(wx.Panel):
             self.update("")
         except Exception as e:
             pass
-
+    def on_kill_proc_server(self, pid):
+        try:
+            p = psutil.Process(pid)
+            p.terminate()
+            self.update("")
+        except Exception as e:
+            pass
 
     def onOpenInfo(self):
         global chrome_path
