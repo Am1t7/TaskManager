@@ -312,6 +312,7 @@ class MainFrame(wx.Frame):
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
 
+
         # create a pubsub receiver
         pub.subscribe(self.updateStatusbar ,'update_status')
         
@@ -324,6 +325,7 @@ class MainFrame(wx.Frame):
         cpu=totalcpu
         mem = totalmem
         disk = totaldisk
+        #self.q.put(client_pro.build_total(procsnum,totalcpu,totalmem,totaldisk))
         self.SetStatusText("Processes: %s" % procs, 0)
         self.SetStatusText("CPU Usage: %s" % cpu, 1)
         self.SetStatusText("Physical Memory: %s" % mem, 2)

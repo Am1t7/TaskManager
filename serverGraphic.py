@@ -14,16 +14,66 @@ class ServerFrame(wx.Frame):
     def __init__(self,parent=None):
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         # create status bar
-        self.CreateStatusBar(1)
+        self.CreateStatusBar()
 
         # creating the main panel
         main_panel = MainPanel(self)
         box = wx.BoxSizer(wx.VERTICAL)
         box.Add(main_panel, 1, wx.EXPAND)
 
+        #pub.subscribe(self.updateStatusbar ,'update_status_server')
+
         self.SetSizer(box)
         self.Layout()
         self.Show()
+
+    '''
+    def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
+        """"""
+        #self.CreateStatusBar()
+        self.StatusBar.SetFieldsCount(4)
+        self.StatusBar.SetStatusWidths([200, 200, 200, 200])
+        procs=procsnum
+        cpu=totalcpu
+        mem = totalmem
+        disk = totaldisk
+        self.SetStatusText("Processes: %s" % procs, 0)
+        self.SetStatusText("CPU Usage: %s" % cpu, 1)
+        self.SetStatusText("Physical Memory: %s" % mem, 2)
+        self.SetStatusText("Disk: %s" % disk, 3)
+    '''
+
+
+
+class TaskFrame(wx.Frame):
+    """"""
+
+    #----------------------------------------------------------------------
+    def __init__(self, mac):
+        """Constructor"""
+        wx.Frame.__init__(self, None, title=mac, size=(1024, 768))
+        panel = TaskPanel(self)
+
+        self.CreateStatusBar()
+        self.StatusBar.SetFieldsCount(4)
+        self.StatusBar.SetStatusWidths([200, 200, 200, 200])
+
+        pub.subscribe(self.updateStatusbar, 'update_status_server')
+
+
+    def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
+        """"""
+        procs=procsnum
+        cpu=totalcpu
+        mem = totalmem
+        disk = totaldisk
+        self.SetStatusText("Processes: %s" % procs, 0)
+        self.SetStatusText("CPU Usage: %s" % cpu, 1)
+        self.SetStatusText("Physical Memory: %s" % mem, 2)
+        self.SetStatusText("Disk: %s" % disk, 3)
+
+
+
 
 
 
@@ -141,7 +191,7 @@ class PcPanel(wx.Panel):
         self.pcImg.Rescale(100, 100)
         self.pcBmp = wx.Bitmap(self.pcImg)
         self.pcBtn = None
-
+        self.mac_string = None
 
         self.macBox = wx.BoxSizer(wx.VERTICAL)
         self.macText = None
@@ -171,6 +221,8 @@ class PcPanel(wx.Panel):
         font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.macText.SetFont(font)
 
+        self.mac_string = mac
+
         #adding to the sizers
         self.macBox.Add(self.macText, 0, wx.ALL, 5)
 
@@ -195,15 +247,18 @@ class PcPanel(wx.Panel):
 
 
     def handle_pc(self, event):
-        self.Hide()
-        self.frame.task.Show()
+        #self.Hide()
+        #self.frame.task.Show()
+        frame = TaskFrame(self.mac_string)
+        panel = TaskPanel(self)
+        frame.Show()
 
 
 
 class TaskPanel(wx.Panel):
     def __init__(self, parent):
         """Constructor"""
-        wx.Panel.__init__(self, parent, size=(1024, 768))
+        wx.Panel.__init__(self, parent=parent)
         self.frame = parent
         self.currentSelection = None
         self.gui_shown = False
@@ -239,9 +294,9 @@ class TaskPanel(wx.Panel):
 
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        #limitProcBtn = wx.Button(self, label = "Set Limits")
-        #limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
-        #button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+        limitProcBtn = wx.Button(self, label = "Set Limits")
+        limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
+        button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -261,10 +316,10 @@ class TaskPanel(wx.Panel):
         #self.Layout()
         #self.Hide()
         self.SetSizer(mainSizer)
-        self.Layout()
-        self.Hide()
+        #self.Layout()
+        #self.Hide()
 
-        #self.procmonOlv.Show()
+        self.procmonOlv.Show()
         #self.Show()
         # ----------------------------------------------------------------------
 
@@ -389,6 +444,10 @@ class TaskPanel(wx.Panel):
         #self.q.put(procs)
         if not self.timer.IsRunning():
             self.timer.Start(15000)
+
+    def onOpenLimit(self,event):
+        pass
+
 
 
 

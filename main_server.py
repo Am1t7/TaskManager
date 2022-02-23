@@ -24,6 +24,10 @@ def get_port():
 
 def main_loop(msg_q, comm):
     global procs
+    cpu_percent = 0
+    mem_percent = 0
+    disk_percent = 0
+    count = 0
     while True:
         data = msg_q.get()
         msg = server_pro.break_msg(data)
@@ -37,12 +41,24 @@ def main_loop(msg_q, comm):
 
         elif msg[0] == "01":
             procs.append(Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]))
+            cpu_percent += float(msg[5])
+            mem_percent += float(msg[6])
+            disk_percent += float(msg[7])
+            count += 1
             #proc = msg[1].split(",")
             #print(proc)
 
         elif msg[0] == "03":
             wx.CallAfter(pub.sendMessage, 'update_server', procs = procs)
+            wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
             procs = []
+            count = 0
+            cpu_percent = 0
+            mem_percent = 0
+            disk_percent = 0
+
+        #elif msg[0] == "04":
+         #   wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=msg[1], totalcpu=msg[2], totalmem=msg[3], totaldisk=msg[4])
 
 
         print("------------------------------------",msg)

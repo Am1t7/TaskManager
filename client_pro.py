@@ -16,6 +16,9 @@ def build_response(func_code, type):
 def build_done():
     return f'03done'
 
+def build_total(num,total_cpu, total_mem, total_disk):
+    return f'04{num},{total_cpu},{total_mem},{total_disk}'
+
 def break_msg(msg):
     code = msg[1][:2]
     main_msg = str(msg[1][2:]).split(",")
