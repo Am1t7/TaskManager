@@ -9,12 +9,14 @@ from pubsub import pub
 import setting
 import random
 from model import Process
+from serverDB import DB
 
 
-
-
+mac = ""
+server_db = DB()
 used_port = [setting.SERVER_PORT]
 procs = []
+bad_procs = []
 def get_port():
     port = random.randint(1000,2000)
     while port in used_port:
@@ -31,6 +33,8 @@ def handle_sending_msgs(msg_q, comm):
 
 def main_loop(msg_q, comm):
     global procs
+    global mac
+    global bad_procs
     cpu_percent = 0
     mem_percent = 0
     disk_percent = 0
@@ -41,13 +45,23 @@ def main_loop(msg_q, comm):
 
         if msg[0] == "02":
             wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]))
+            mac = str(msg[1])
+            server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
+            #TODO: add the ban proc data base
             #port = get_port()
             #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
             #build...(port)
             # sne msg
 
         elif msg[0] == "01":
-            procs.append(Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7]))
+            p = Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7])
+            procs.append(p)
+            if float(msg[5]) > float(server_db.get_cpu_limits_value(mac)):
+                bad_procs.append(procs.index(p))
+            if float(msg[6]) > float(server_db.get_mem_limits_value(mac)):
+                bad_procs.append(procs.index(p))
+            if float(msg[7]) > float(server_db.get_disk_limits_value(mac)):
+                bad_procs.append(procs.index(p))
             cpu_percent += float(msg[5])
             mem_percent += float(msg[6])
             disk_percent += float(msg[7])
@@ -56,7 +70,7 @@ def main_loop(msg_q, comm):
             #print(proc)
 
         elif msg[0] == "03":
-            wx.CallAfter(pub.sendMessage, 'update_server', procs = procs)
+            wx.CallAfter(pub.sendMessage, 'update_server', procs = procs, bad_procs = bad_procs)
             wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
             procs = []
             count = 0
@@ -79,5 +93,5 @@ threading.Thread(target=main_loop, args=(msg_q,comm,)).start()
 threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()
 
 app = wx.App(False)
-frame = serverGraphic.ServerFrame(send_q=send_msg_q)
+frame = serverGraphic.ServerFrame(send_q=send_msg_q, mac=mac)
 app.MainLoop()

@@ -33,14 +33,20 @@ class DB:
         :return:
         """
 
-        self.conn = sqlite3.connect(self.DB_name)
+        self.conn = sqlite3.connect(self.DB_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
         # create the data base with the values
         sql = f"CREATE TABLE IF NOT EXISTS {self.users_tbl_name} ( username TEXT, password TEXT)"
         self.cursor.execute(sql)
-        # update the db
+        sql = f"CREATE TABLE IF NOT EXISTS {self.limits_tbl_name} ( mac TEXT, CPU FLOAT, Memory FLOAT, Disk FLOAT)"
+        self.cursor.execute(sql)
+        sql = f"CREATE TABLE IF NOT EXISTS {self.ban_procs_tbl_name} ( mac TEXT, software TEXT)"
+        self.cursor.execute(sql)
+
         self.conn.commit()
+
+#---------------------------------------------------------------- users----------------------------------------------------
 
     def username_exist(self, username):
         '''
@@ -107,6 +113,60 @@ class DB:
         # update the db
         self.conn.commit()
 
+
+#---------------------------------------------------------------- limits ----------------------------------------------
+
+    def mac_exist(self, mac):
+        sql = f"SELECT mac FROM {self.limits_tbl_name} WHERE mac='{mac}'"
+        self.cursor.execute(sql)
+
+        return not len(self.cursor.fetchall()) == 0
+
+    def pc_limit_add(self, mac, cpu, mem, disk):
+        retValue = False
+
+        if not self.mac_exist(mac):
+
+            retValue = True
+            sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{cpu}', '{mem}', '{disk}')"
+            self.cursor.execute(sql)
+            # update the db
+            self.conn.commit()
+
+        return retValue
+
+    def update_cpu_value(self, value):
+        sql = f"UPDATE {self.limits_tbl_name} SET CPU = '{value}'"
+        self.cursor.execute(sql)
+        # update the db
+        self.conn.commit()
+
+    def update_mem_value(self, value):
+        sql = f"UPDATE {self.limits_tbl_name} SET Memory = '{value}' "
+        self.cursor.execute(sql)
+        # update the db
+        self.conn.commit()
+
+    def update_disk_value(self, value):
+        sql = f"UPDATE {self.limits_tbl_name} SET Disk = '{value}'"
+        self.cursor.execute(sql)
+        # update the db
+        self.conn.commit()
+
+    def get_cpu_limits_value(self, mac):
+        sql = f"SELECT CPU FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()[0]
+
+    def get_mem_limits_value(self, mac):
+        sql = f"SELECT Memory FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()[0]
+
+    def get_disk_limits_value(self, mac):
+        sql = f"SELECT Disk FROM {self.limits_tbl_name} WHERE mac = '{mac}'"
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()[0]
 
 
 if __name__ == '__main__':

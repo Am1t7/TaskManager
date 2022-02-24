@@ -3,13 +3,13 @@
 
 
 def build_set_limits(type, limit):
-    return f'02{type}{limit}'
+    return f'02{type},{limit}'
 
-def build_close_proc(name):
-    return f'03{name}'
+def build_close_proc(pid):
+    return f'03{pid}'
 
-def build_ban_proc(pid):
-    return f'04{pid}'
+def build_ban_proc(name):
+    return f'04{name}'
 
 def build_close_sys(type):
     return f'05{type}'

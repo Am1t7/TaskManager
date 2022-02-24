@@ -7,42 +7,26 @@ import psutil
 import webbrowser
 from googlesearch import search
 import server_pro
+from serverDB import DB
 
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
 class ServerFrame(wx.Frame):
-    def __init__(self,parent=None,send_q=None):
+    def __init__(self,parent=None,send_q=None,mac=None):
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         # create status bar
         self.CreateStatusBar()
 
         # creating the main panel
-        main_panel = MainPanel(self,send_q)
+        main_panel = MainPanel(self,send_q, mac)
         box = wx.BoxSizer(wx.VERTICAL)
         box.Add(main_panel, 1, wx.EXPAND)
 
-        #pub.subscribe(self.updateStatusbar ,'update_status_server')
 
         self.SetSizer(box)
         self.Layout()
         self.Show()
-
-    '''
-    def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
-        """"""
-        #self.CreateStatusBar()
-        self.StatusBar.SetFieldsCount(4)
-        self.StatusBar.SetStatusWidths([200, 200, 200, 200])
-        procs=procsnum
-        cpu=totalcpu
-        mem = totalmem
-        disk = totaldisk
-        self.SetStatusText("Processes: %s" % procs, 0)
-        self.SetStatusText("CPU Usage: %s" % cpu, 1)
-        self.SetStatusText("Physical Memory: %s" % mem, 2)
-        self.SetStatusText("Disk: %s" % disk, 3)
-    '''
 
 
 
@@ -53,7 +37,7 @@ class TaskFrame(wx.Frame):
     def __init__(self, mac, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title=mac, size=(1024, 768))
-        panel = TaskPanel(self, send_q)
+        panel = TaskPanel(self, send_q, mac)
 
         self.CreateStatusBar()
         self.StatusBar.SetFieldsCount(4)
@@ -81,7 +65,7 @@ class TaskFrame(wx.Frame):
 
 
 class MainPanel(wx.Panel):
-    def __init__(self, parent, send_q):
+    def __init__(self, parent, send_q, mac):
         #wx.Panel.__init__(self, parent=parent)
         wx.Panel.__init__(self, parent, size=(1024, 768))
 
@@ -92,7 +76,7 @@ class MainPanel(wx.Panel):
         # creating all the screen panels
         self.login = LoginPanel(self)
         self.pc = PcPanel(self, send_q)
-        self.task = TaskPanel(self, send_q)
+        self.task = TaskPanel(self, send_q, mac)
         #self.stations = StationsPanel(self, self.frame)
 
         # adding all the screen panels to the sizers
@@ -224,7 +208,6 @@ class PcPanel(wx.Panel):
         self.macText.SetFont(font)
 
         self.mac_string = mac
-
         #adding to the sizers
         self.macBox.Add(self.macText, 0, wx.ALL, 5)
 
@@ -252,13 +235,13 @@ class PcPanel(wx.Panel):
         #self.Hide()
         #self.frame.task.Show()
         frame = TaskFrame(self.mac_string, self.q)
-        panel = TaskPanel(self, self.q)
+        panel = TaskPanel(self, self.q, self.mac_string)
         frame.Show()
 
 
 
 class TaskPanel(wx.Panel):
-    def __init__(self, parent, send_q):
+    def __init__(self, parent, send_q, mac):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
@@ -268,6 +251,7 @@ class TaskPanel(wx.Panel):
         self.bad_procs = []
         self.sort_col = 0
         self.q = send_q
+        self.mac = mac
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -388,6 +372,12 @@ class TaskPanel(wx.Panel):
         itemId = item.GetId()
         self.currentSelection = itemId
 
+
+    def onOpenLimit(self,event):
+        frame = LimitsFrame(self.mac, self.q)
+        panel = LimitsPanel(self,self.mac, self.q)
+        frame.Show()
+
     #----------------------------------------------------------------------
     def setProcs(self):
         """
@@ -437,20 +427,101 @@ class TaskPanel(wx.Panel):
         #controller.ProcThread()
 
     #----------------------------------------------------------------------
-    def updateDisplay_server(self, procs):#, bad_procs):
+    def updateDisplay_server(self, procs,bad_procs):
         """
         Catches the pubsub message from the thread and updates the display
         """
         print ("thread done, updating display!")
         self.procs = procs
-        #self.bad_procs = bad_procs
+        self.bad_procs = bad_procs
         self.setProcs()
-        #self.q.put(procs)
         if not self.timer.IsRunning():
             self.timer.Start(15000)
 
-    def onOpenLimit(self,event):
-        pass
+class LimitsFrame(wx.Frame):
+    """"""
+
+    #----------------------------------------------------------------------
+    def __init__(self, mac, send_q):
+        """Constructor"""
+        wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
+        panel = LimitsPanel(self, mac, send_q)
+
+
+class LimitsPanel(wx.Panel):
+    def __init__(self, parent, mac, send_q):
+        wx.Panel.__init__(self, parent=parent)
+        self.frame = parent
+        self.db = DB()
+        self.mac = mac
+        self.q = send_q
+        # the main sizer
+        b_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # cpu
+        cpu_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_cpu_box = wx.BoxSizer(wx.HORIZONTAL)
+        cpu_text = wx.StaticText(self, 1, label="CPU:  ")
+        before_cpu = wx.StaticText(self, 1, label=f"CPU limit: {self.db.get_cpu_limits_value(self.mac)}")
+        self.cpuField = wx.TextCtrl(self, -1, name="",size=(150, -1))
+        cpu_box.Add(cpu_text, 0, wx.ALL, 5)
+        before_cpu_box.Add(before_cpu, 0, wx.ALL, 5)
+        cpu_box.Add(self.cpuField, 0, wx.ALL, 5)
+
+
+        # mem
+        memory_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_memory_box = wx.BoxSizer(wx.HORIZONTAL)
+        memory_text = wx.StaticText(self, 1, label="Memory: ")
+        before_mem = wx.StaticText(self, 1, label=f"Memory limit: {self.db.get_mem_limits_value(self.mac)}")
+        self.memField = wx.TextCtrl(self, -1, name="",size=(150, -1))
+        memory_box.Add(memory_text, 0, wx.ALL, 5)
+        before_memory_box.Add(before_mem,0,wx.ALL,5)
+        memory_box.Add(self.memField, 0, wx.ALL, 5)
+
+        # disk
+        disk_box = wx.BoxSizer(wx.HORIZONTAL)
+        before_disk_box = wx.BoxSizer(wx.HORIZONTAL)
+        disk_text = wx.StaticText(self, 1, label="Disk: ")
+        before_disk = wx.StaticText(self, 1, label=f"Disk limit: {self.db.get_disk_limits_value(self.mac)}")
+        self.diskField = wx.TextCtrl(self, -1, name="",size=(150, -1))
+        disk_box.Add(disk_text, 0, wx.ALL, 5)
+        disk_box.Add(self.diskField, 0, wx.ALL, 5)
+        before_disk_box.Add(before_disk,0,wx.ALL,5)
+
+        btnBox = wx.BoxSizer(wx.HORIZONTAL)
+        applyBtn = wx.Button(self, wx.ID_ANY, label="Apply",size = (200, 60))
+        applyBtn.Bind(wx.EVT_BUTTON, self.handle_limits)
+        btnBox.Add(applyBtn, 0, wx.ALL, 5)
+
+        b_sizer.Add(cpu_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_cpu_box,0,wx.CENTER | wx.ALL,5)
+        b_sizer.Add(memory_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_memory_box,0,wx.CENTER | wx.ALL,5)
+        b_sizer.Add(disk_box, 0, wx.CENTER | wx.ALL, 5)
+        b_sizer.Add(before_disk_box,0,wx.CENTER | wx.ALL,5)
+        b_sizer.AddSpacer(30)
+        b_sizer.Add(btnBox, wx.CENTER | wx.ALL, 5)
+
+        self.SetSizer(b_sizer)
+        self.Layout()
+        self.Show()
+
+    def handle_limits(self, event):
+        # extract limits
+        cpu = self.cpuField.GetValue()
+        mem = self.memField.GetValue()
+        disk = self.diskField.GetValue()
+        if cpu != "":
+            self.db.update_cpu_value(cpu)
+            self.q.put(server_pro.build_set_limits("CPU", str(cpu)))
+        if mem != "":
+            self.db.update_mem_value(mem)
+            self.q.put(server_pro.build_set_limits("Memory", str(mem)))
+        if disk != "":
+            self.db.update_disk_value(disk)
+            self.q.put(server_pro.build_set_limits("Disk", str(disk)))
+        self.frame.Close()
 
 
 

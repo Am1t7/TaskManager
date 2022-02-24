@@ -19,7 +19,6 @@ class MainPanel(wx.Panel):
     def __init__(self, parent, send_q):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
-        #self.limit = Limits()
         self.frame = parent
         self.currentSelection = None
         self.gui_shown = False
@@ -27,6 +26,7 @@ class MainPanel(wx.Panel):
         self.bad_procs = []
         self.sort_col = 0
         self.q = send_q
+        self.db = DB()
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -78,6 +78,7 @@ class MainPanel(wx.Panel):
         # create a pubsub receiver
         pub.subscribe(self.updateDisplay ,'update')
         pub.subscribe(self.on_kill_proc_server, 'kill')
+        pub.subscribe(self.limits_from_server, 'update_limits')
 
 
     #----------------------------------------------------------------------
@@ -215,9 +216,18 @@ class MainPanel(wx.Panel):
         self.bad_procs = bad_procs
         self.setProcs()
         self.q.put(procs)
+        #self.q.put(bad_procs)
         #self.q.put(client_pro.build_done())
         if not self.timer.IsRunning():
             self.timer.Start(15000)
+
+    def limits_from_server(self, type, value):
+        if type == "CPU":
+            self.db.update_cpu_value(float(value))
+        if type == "Memory":
+            self.db.update_mem_value(float(value))
+        if type == "Disk":
+            self.db.update_disk_value(float(value))
 
 ########################################################################
 class LimitsFrame(wx.Frame):
