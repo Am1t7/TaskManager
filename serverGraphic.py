@@ -12,6 +12,7 @@ from serverDB import DB
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
+
 class ServerFrame(wx.Frame):
     def __init__(self,parent=None,send_q=None,mac=None):
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
@@ -184,7 +185,7 @@ class PcPanel(wx.Panel):
 
         #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
         #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
-
+        self.SetBackgroundColour(wx.WHITE)
         pub.subscribe(self.add_pc, 'add')
         pub.subscribe(self.del_pc, 'del')
 
@@ -193,30 +194,34 @@ class PcPanel(wx.Panel):
         self.Hide()
 
 
-    def add_pc(self, mac):
+    def add_pc(self, mac, pass_limit, created):
         '''
         adding pc to the connected pc view
         :param mac: the mac address of the pc
         :return:
         '''
-        #creating the pc logo button
-        self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
-        self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
-        #create the text with the mac address
-        self.macText = wx.StaticText(self, -1, str(mac))
-        font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.macText.SetFont(font)
+        if created == False:
+            #creating the pc logo button
+            self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
+            self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+            #create the text with the mac address
+            self.macText = wx.StaticText(self, -1, str(mac))
+            font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+            self.macText.SetFont(font)
+            self.mac_string = mac
+            #adding to the sizers
+            self.macBox.Add(self.macText, 0, wx.ALL, 5)
 
-        self.mac_string = mac
-        #adding to the sizers
-        self.macBox.Add(self.macText, 0, wx.ALL, 5)
+            self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
-        self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
-
-        #adding to the main sizer
-        self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-        self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
-
+            #adding to the main sizer
+            self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+            self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
+            created = True
+        elif created and pass_limit == False:
+            self.macText.SetBackgroundColour(wx.WHITE)
+        elif created and pass_limit == True:
+            self.macText.SetBackgroundColour(wx.RED)
         self.mainSizer.Layout()
 
     def del_pc(self):
@@ -434,6 +439,10 @@ class TaskPanel(wx.Panel):
         print ("thread done, updating display!")
         self.procs = procs
         self.bad_procs = bad_procs
+        if len(bad_procs) != 0:
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True)
+        else:
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True)
         self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)

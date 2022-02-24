@@ -44,7 +44,7 @@ def main_loop(msg_q, comm):
         msg = server_pro.break_msg(data)
 
         if msg[0] == "02":
-            wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]))
+            wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]), pass_limit = False, created=False)
             mac = str(msg[1])
             server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
             #TODO: add the ban proc data base
@@ -73,6 +73,7 @@ def main_loop(msg_q, comm):
             wx.CallAfter(pub.sendMessage, 'update_server', procs = procs, bad_procs = bad_procs)
             wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
             procs = []
+            bad_procs = []
             count = 0
             cpu_percent = 0
             mem_percent = 0
