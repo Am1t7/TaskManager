@@ -17,6 +17,8 @@ class DB:
         self.limits_tbl_name = "limits"
         self.fields = ['cpu', 'mem', 'disk']
 
+        self.ban_procs_tbl_name = "Ban_procs"
+
         # The pointer to the DB
         self.conn = None
 
@@ -37,6 +39,8 @@ class DB:
 
         # create the data base with the values
         sql = f"CREATE TABLE IF NOT EXISTS {self.limits_tbl_name} ( field TEXT, value FLOAT)"
+        self.cursor.execute(sql)
+        sql = f"CREATE TABLE IF NOT EXISTS {self.ban_procs_tbl_name} ( mac TEXT, software TEXT)"
         self.cursor.execute(sql)
 
         for field in self.fields:
@@ -91,6 +95,28 @@ class DB:
         sql = f"SELECT value FROM {self.limits_tbl_name} WHERE field = 'disk'"
         self.cursor.execute(sql)
         return self.cursor.fetchone()[0]
+
+
+#------------------------------------------------------------------------ Ban Procs -------------------------------------------------------------
+
+    def mac_soft_exist(self, mac, soft):
+        sql = f"SELECT mac,software FROM {self.ban_procs_tbl_name} WHERE mac='{mac}' AND software='{soft}'"
+        self.cursor.execute(sql)
+
+        return not len(self.cursor.fetchall()) == 0
+
+    def add_ban(self, mac, soft):
+        retValue = False
+
+        if not self.mac_soft_exist(mac, soft):
+
+            retValue = True
+            sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{soft}')"
+            self.cursor.execute(sql)
+            # update the db
+            self.conn.commit()
+
+        return retValue
 
 
 if __name__ == '__main__':

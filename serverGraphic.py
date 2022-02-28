@@ -257,6 +257,7 @@ class TaskPanel(wx.Panel):
         self.sort_col = 0
         self.q = send_q
         self.mac = mac
+        self.db = DB()
 
         self.col_w = {"name":175,
                       "pid":50,
@@ -289,6 +290,11 @@ class TaskPanel(wx.Panel):
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
+
+        banProcBtn = wx.Button(self, label = "Ban Process")
+        banProcBtn.Bind(wx.EVT_BUTTON, self.onBanProcess)
+        button_sizer.Add(banProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -382,6 +388,15 @@ class TaskPanel(wx.Panel):
         frame = LimitsFrame(self.mac, self.q)
         panel = LimitsPanel(self,self.mac, self.q)
         frame.Show()
+
+    def onBanProcess(self, event):
+        dlg = wx.TextEntryDialog(self, 'Process name: ', 'Ban Process')
+        dlg.SetValue("")
+        if dlg.ShowModal() == wx.ID_OK:
+            self.db.add_ban(self.mac, dlg.GetValue())
+            self.q.put(server_pro.build_ban_proc(dlg.GetValue()))
+            print('You entered: %s\n' % dlg.GetValue())
+        dlg.Destroy()
 
     #----------------------------------------------------------------------
     def setProcs(self):

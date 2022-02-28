@@ -139,13 +139,6 @@ class MainPanel(wx.Panel):
     def onOpenLimit(self,event):
         frame = LimitsFrame()
         panel = LimitsPanel(self)
-        '''
-        dlg = wx.TextEntryDialog(frame, 'CPU:', 'Set CPU Limit')
-        dlg.SetValue("")
-        if dlg.ShowModal() == wx.ID_OK:
-            print('You entered: %s\n' % dlg.GetValue())
-        dlg.Destroy()
-        '''
 
         frame.Show()
     #----------------------------------------------------------------------

@@ -169,6 +169,31 @@ class DB:
         return self.cursor.fetchone()[0]
 
 
+
+#------------------------------------------------------------------------ Ban Procs -------------------------------------------------------------
+
+    def mac_soft_exist(self, mac, soft):
+        sql = f"SELECT mac,software FROM {self.ban_procs_tbl_name} WHERE mac='{mac}' AND software='{soft}'"
+        self.cursor.execute(sql)
+
+        return not len(self.cursor.fetchall()) == 0
+
+    def add_ban(self, mac, soft):
+        retValue = False
+
+        if not self.mac_soft_exist(mac, soft):
+
+            retValue = True
+            sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{soft}')"
+            self.cursor.execute(sql)
+            # update the db
+            self.conn.commit()
+
+        return retValue
+
+
+
+
 if __name__ == '__main__':
     db = DB()
     db._createDB()
