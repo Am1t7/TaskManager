@@ -79,6 +79,8 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.updateDisplay ,'update')
         pub.subscribe(self.on_kill_proc_server, 'kill')
         pub.subscribe(self.limits_from_server, 'update_limits')
+        pub.subscribe(self.ban_from_server, 'ban')
+        pub.subscribe(self.display_opening_ban_proc, 'open_ban')
 
 
     #----------------------------------------------------------------------
@@ -221,6 +223,15 @@ class MainPanel(wx.Panel):
             self.db.update_mem_value(float(value))
         if type == "Disk":
             self.db.update_disk_value(float(value))
+
+
+    def ban_from_server(self, mac, soft):
+        self.db.add_ban(mac, soft)
+
+
+    def display_opening_ban_proc(self, name):
+        wx.MessageBox(f'{name} is banned!!!', 'Warning',
+                      wx.OK | wx.ICON_WARNING)
 
 ########################################################################
 class LimitsFrame(wx.Frame):

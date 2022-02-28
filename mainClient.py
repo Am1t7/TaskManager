@@ -6,10 +6,11 @@ import setting
 import wx
 import threading
 from pubsub import pub
+import uuid
 
 
 
-
+mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 
 def handle_sending_msgs(msg_q, comm):
     while True:
@@ -40,7 +41,7 @@ def main_loop(msg_q):
             wx.CallAfter(pub.sendMessage, 'update_limits', type=str(msg[1]), value= msg[2])
 
         if msg[0] == "04":
-            pass
+            wx.CallAfter(pub.sendMessage, 'ban', mac=mac, soft=msg[1])
 
         # if  create client
         # break -> port

@@ -62,6 +62,9 @@ def main_loop(msg_q, comm):
                 bad_procs.append(procs.index(p))
             if float(msg[7]) > float(server_db.get_disk_limits_value(mac)):
                 bad_procs.append(procs.index(p))
+            for s in server_db.get_soft_value(mac):
+                if str(s) == p.name:
+                    bad_procs.append(procs.index(p))
             cpu_percent += float(msg[5])
             mem_percent += float(msg[6])
             disk_percent += float(msg[7])

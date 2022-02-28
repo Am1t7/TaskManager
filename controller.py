@@ -74,6 +74,9 @@ class ProcThread(Thread):
                     bad_procs.append(procs.index(new_proc))
                 if disk > float(db.get_disk_limits_value()):
                     bad_procs.append(procs.index(new_proc))
+                for s in db.get_soft_value(self.mac):
+                    if str(s[1]) == new_proc.name:
+                        wx.CallAfter(pub.sendMessage, 'open_ban',name=new_proc.name)
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk

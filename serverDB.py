@@ -184,12 +184,17 @@ class DB:
         if not self.mac_soft_exist(mac, soft):
 
             retValue = True
-            sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{soft}')"
+            sql = f"INSERT INTO {self.ban_procs_tbl_name} VALUES ('{mac}', '{soft}')"
             self.cursor.execute(sql)
             # update the db
             self.conn.commit()
 
         return retValue
+
+    def get_soft_value(self, mac):
+        sql = f"SELECT * FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}'"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
 
 
 
