@@ -229,9 +229,20 @@ class MainPanel(wx.Panel):
         self.db.add_ban(mac, soft)
 
 
-    def display_opening_ban_proc(self, name):
-        wx.MessageBox(f'{name} is banned!!!', 'Warning',
-                      wx.OK | wx.ICON_WARNING)
+    def display_opening_ban_proc(self, name, procs):
+        print("here")
+        for p in procs:
+            if name == p.name:
+                try:
+                    psutil.Process(int(p.pid)).terminate()
+                    #self.update("")
+                except Exception as e:
+                    pass
+        self.update("")
+        wx.MessageBox(f'{name} is banned!!!', 'Warning', wx.ICON_WARNING | wx.OK)
+
+
+
 
 ########################################################################
 class LimitsFrame(wx.Frame):

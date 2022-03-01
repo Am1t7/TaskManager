@@ -47,6 +47,7 @@ class ProcThread(Thread):
         """"""
         procs = []
         bad_procs = []
+        already_checked = []
         cpu_percent = 0
         mem_percent = 0
         disk_percent = 0
@@ -74,9 +75,8 @@ class ProcThread(Thread):
                     bad_procs.append(procs.index(new_proc))
                 if disk > float(db.get_disk_limits_value()):
                     bad_procs.append(procs.index(new_proc))
-                for s in db.get_soft_value(self.mac):
-                    if str(s[1]) == new_proc.name:
-                        wx.CallAfter(pub.sendMessage, 'open_ban',name=new_proc.name)
+
+
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk
@@ -84,6 +84,13 @@ class ProcThread(Thread):
 
             except Exception as e:
                 pass
+
+        for s in db.get_soft_value(self.mac):
+            for p in procs:
+                if str(s[1]) == p.name and str(s[1]):
+                    wx.CallAfter(pub.sendMessage, 'open_ban', name=p.name, procs=procs)
+                    break
+
 
 
 
