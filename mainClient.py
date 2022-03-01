@@ -9,7 +9,6 @@ from pubsub import pub
 import uuid
 
 
-
 mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 
 def handle_sending_msgs(msg_q, comm):

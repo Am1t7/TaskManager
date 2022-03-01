@@ -97,7 +97,7 @@ class DB:
         return self.cursor.fetchone()[0]
 
 
-#------------------------------------------------------------------------ Ban Procs -------------------------------------------------------------
+#------------------------------------------------------------------------ Ban Procs ------------------------------------------------------------
 
     def mac_soft_exist(self, mac, soft):
         sql = f"SELECT mac,software FROM {self.ban_procs_tbl_name} WHERE mac='{mac}' AND software='{soft}'"

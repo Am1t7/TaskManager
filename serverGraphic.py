@@ -34,7 +34,7 @@ class ServerFrame(wx.Frame):
 class TaskFrame(wx.Frame):
     """"""
 
-    #----------------------------------------------------------------------
+    #---------------------------------------------------------------------
     def __init__(self, mac, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title=mac, size=(1024, 768))

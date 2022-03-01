@@ -3,7 +3,6 @@ import threading
 import uuid
 import client_pro
 
-
 class Client_com():
     '''
     constructor

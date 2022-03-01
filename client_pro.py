@@ -26,4 +26,3 @@ def break_msg(msg):
     for m in main_msg:
         msg_lst.append(m)
     return msg_lst
-

@@ -18,7 +18,6 @@ class server_com():
         threading.Thread(target=self._main_loop).start()
 
 
-
     def _get_ip_by_socket(self, socket):
         '''
 

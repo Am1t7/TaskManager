@@ -94,7 +94,7 @@ class ProcThread(Thread):
 
 
 
-                
+
         # send pids to GUI
         wx.CallAfter(pub.sendMessage,'update',procs=procs, bad_procs=bad_procs)
         

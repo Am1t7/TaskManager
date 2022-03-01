@@ -248,7 +248,7 @@ class MainPanel(wx.Panel):
 class LimitsFrame(wx.Frame):
     """"""
 
-    #----------------------------------------------------------------------
+    #---------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))

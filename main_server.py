@@ -47,7 +47,6 @@ def main_loop(msg_q, comm):
             wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]), pass_limit = False, created=False)
             mac = str(msg[1])
             server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
-            #TODO: add the ban proc data base
             #port = get_port()
             #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
             #build...(port)
