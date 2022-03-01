@@ -416,7 +416,7 @@ class TaskPanel(wx.Panel):
             self.q.put(server_pro.build_unban_proc(dlg.GetValue()))
         dlg.Destroy()
 
-    def onshutpc(self):
+    def onshutpc(self,event):
         self.q.put(server_pro.build_close_pc())
 
 
