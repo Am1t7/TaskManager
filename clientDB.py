@@ -118,6 +118,17 @@ class DB:
 
         return retValue
 
+    def delete_ban_proc(self,mac,name):
+        '''
+        delete a user details from the db
+        :param username: the username of the user you want to delete
+        :return:
+        '''
+        sql = f"DELETE FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}' AND software = '{name}'"
+        self.cursor.execute(sql)
+        # update the db
+        self.conn.commit()
+
     def get_soft_value(self, mac):
         sql = f"SELECT * FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}'"
         self.cursor.execute(sql)

@@ -81,6 +81,7 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.limits_from_server, 'update_limits')
         pub.subscribe(self.ban_from_server, 'ban')
         pub.subscribe(self.display_opening_ban_proc, 'open_ban')
+        pub.subscribe(self.unban_from_server, 'del_ban')
 
 
     #----------------------------------------------------------------------
@@ -227,6 +228,9 @@ class MainPanel(wx.Panel):
 
     def ban_from_server(self, mac, soft):
         self.db.add_ban(mac, soft)
+
+    def unban_from_server(self, mac, soft):
+        self.db.delete_ban_proc(mac, soft)
 
 
     def display_opening_ban_proc(self, name, procs):

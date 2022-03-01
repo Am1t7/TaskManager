@@ -297,6 +297,11 @@ class TaskPanel(wx.Panel):
         button_sizer.Add(banProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
+        unbanProcBtn = wx.Button(self, label = "Unban Process")
+        unbanProcBtn.Bind(wx.EVT_BUTTON, self.onUnbanProcess)
+        button_sizer.Add(unbanProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
+
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -395,8 +400,17 @@ class TaskPanel(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             self.db.add_ban(self.mac, dlg.GetValue())
             self.q.put(server_pro.build_ban_proc(dlg.GetValue()))
-            print('You entered: %s\n' % dlg.GetValue())
         dlg.Destroy()
+
+    def onUnbanProcess(self, event):
+        dlg = wx.TextEntryDialog(self, 'Process name: ', 'Unban Process')
+        dlg.SetValue("")
+        if dlg.ShowModal() == wx.ID_OK:
+            self.db.delete_ban_proc(self.mac, dlg.GetValue())
+            self.q.put(server_pro.build_unban_proc(dlg.GetValue()))
+        dlg.Destroy()
+
+
 
     #----------------------------------------------------------------------
     def setProcs(self):

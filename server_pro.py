@@ -19,6 +19,9 @@ def build_net_block():
 def build_send_port(port):
     return f'07{port}'
 
+def build_unban_proc(name):
+    return f'08{name}'
+
 def break_msg(msg):
     code = msg[1][:2]
     main_msg = str(msg[1][2:]).split(",")
