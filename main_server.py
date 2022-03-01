@@ -10,6 +10,8 @@ import setting
 import random
 from model import Process
 from serverDB import DB
+import hashlib
+
 
 
 mac = ""
@@ -94,6 +96,8 @@ send_msg_q = queue.Queue()
 comm = server_com.server_com(setting.SERVER_IP,setting.SERVER_PORT,msg_q)
 threading.Thread(target=main_loop, args=(msg_q,comm,)).start()
 threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()
+
+server_db.add_user("amit", hashlib.md5("12345".encode()).hexdigest())
 
 app = wx.App(False)
 frame = serverGraphic.ServerFrame(send_q=send_msg_q, mac=mac)

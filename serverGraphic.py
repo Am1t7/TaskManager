@@ -9,6 +9,7 @@ from googlesearch import search
 import server_pro
 from serverDB import DB
 import os
+import hashlib
 
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
@@ -159,7 +160,7 @@ class LoginPanel(wx.Panel):
         username = self.userField.GetValue()
         password = self.passField.GetValue()
 
-        if(self.db.username_exist(username) and self.db.pass_exist(password)):
+        if(self.db.username_exist(username) and self.db.pass_exist(hashlib.md5(str(password).encode()).hexdigest())):
             self.Hide()
             self.frame.pc.Show()
         else:
