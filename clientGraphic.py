@@ -8,6 +8,7 @@ import webbrowser
 from googlesearch import search
 from clientDB import DB
 import client_pro
+import os
 
 
 ########################################################################
@@ -82,6 +83,7 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.ban_from_server, 'ban')
         pub.subscribe(self.display_opening_ban_proc, 'open_ban')
         pub.subscribe(self.unban_from_server, 'del_ban')
+        pub.subscribe(self.shut_pc, 'shut')
 
 
     #----------------------------------------------------------------------
@@ -244,6 +246,9 @@ class MainPanel(wx.Panel):
                     pass
         self.update("")
         wx.MessageBox(f'{name} is banned!!!', 'Warning', wx.ICON_WARNING | wx.OK)
+
+    def shut_pc(self):
+        os.system('shutdown -s')
 
 
 

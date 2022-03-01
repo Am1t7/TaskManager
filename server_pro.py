@@ -10,8 +10,8 @@ def build_close_proc(pid):
 def build_ban_proc(name):
     return f'04{name}'
 
-def build_close_sys(type):
-    return f'05{type}'
+def build_close_sys():
+    return f'05close'
 
 def build_net_block():
     return "06deny"
@@ -22,6 +22,8 @@ def build_send_port(port):
 def build_unban_proc(name):
     return f'08{name}'
 
+def build_close_pc():
+    return f'09shut'
 def break_msg(msg):
     code = msg[1][:2]
     main_msg = str(msg[1][2:]).split(",")

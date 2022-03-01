@@ -8,6 +8,7 @@ import webbrowser
 from googlesearch import search
 import server_pro
 from serverDB import DB
+import os
 
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
@@ -302,6 +303,11 @@ class TaskPanel(wx.Panel):
         button_sizer.Add(unbanProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
+        shutProcBtn = wx.Button(self, label = "Shutdown Pc")
+        shutProcBtn.Bind(wx.EVT_BUTTON, self.onshutpc)
+        button_sizer.Add(shutProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
+
+
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -409,6 +415,9 @@ class TaskPanel(wx.Panel):
             self.db.delete_ban_proc(self.mac, dlg.GetValue())
             self.q.put(server_pro.build_unban_proc(dlg.GetValue()))
         dlg.Destroy()
+
+    def onshutpc(self):
+        self.q.put(server_pro.build_close_pc())
 
 
 

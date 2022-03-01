@@ -45,6 +45,9 @@ def main_loop(msg_q):
         if msg[0] == "08":
             wx.CallAfter(pub.sendMessage, 'del_ban', mac=mac, soft=msg[1])
 
+        if msg[0] == "09":
+            wx.CallAfter(pub.sendMessage, 'shut',)
+
         # if  create client
         # break -> port
         # procs_comm = client_com.Client_com(setting.SERVER_IP,port,recv_msg_q)
