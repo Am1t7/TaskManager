@@ -84,6 +84,7 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.display_opening_ban_proc, 'open_ban')
         pub.subscribe(self.unban_from_server, 'del_ban')
         pub.subscribe(self.shut_pc, 'shut')
+        pub.subscribe(self.close_sys, 'close')
 
 
     #----------------------------------------------------------------------
@@ -249,6 +250,10 @@ class MainPanel(wx.Panel):
 
     def shut_pc(self):
         os.system('shutdown -s')
+
+    def close_sys(self):
+        self.frame.Destroy()
+
 
 
 

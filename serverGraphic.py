@@ -305,7 +305,13 @@ class TaskPanel(wx.Panel):
 
         shutProcBtn = wx.Button(self, label = "Shutdown Pc")
         shutProcBtn.Bind(wx.EVT_BUTTON, self.onshutpc)
+        button_sizer.AddSpacer(550)
         button_sizer.Add(shutProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
+
+
+        closeProcBtn = wx.Button(self, label = "Close System")
+        closeProcBtn.Bind(wx.EVT_BUTTON, self.onclosesys)
+        button_sizer.Add(closeProcBtn, 0, wx.RIGHT | wx.ALL, 0)
 
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -418,6 +424,10 @@ class TaskPanel(wx.Panel):
 
     def onshutpc(self,event):
         self.q.put(server_pro.build_close_pc())
+
+    def onclosesys(self, event):
+        self.q.put(server_pro.build_close_sys())
+        self.frame.Destroy()
 
 
 

@@ -68,6 +68,9 @@ class Client_com():
         '''
         return self.mac
 
+    def get_socket(self):
+        return self.my_socket
+
 
 
 

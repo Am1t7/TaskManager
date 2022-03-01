@@ -48,6 +48,11 @@ def main_loop(msg_q):
         if msg[0] == "09":
             wx.CallAfter(pub.sendMessage, 'shut',)
 
+        if msg[0] == "05":
+            #frame.Destroy()
+            wx.CallAfter(pub.sendMessage, 'close', )
+            client_com.Client_com.get_socket(comm).close()
+
         # if  create client
         # break -> port
         # procs_comm = client_com.Client_com(setting.SERVER_IP,port,recv_msg_q)
