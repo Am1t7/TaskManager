@@ -24,6 +24,10 @@ def build_unban_proc(name):
 
 def build_close_pc():
     return f'09shut'
+
+
+def build_start():
+    return "10start"
 def break_msg(msg):
     code = msg[1][:2]
     main_msg = str(msg[1][2:]).split(",")

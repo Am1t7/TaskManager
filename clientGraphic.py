@@ -85,6 +85,7 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.unban_from_server, 'del_ban')
         pub.subscribe(self.shut_pc, 'shut')
         pub.subscribe(self.close_sys, 'close')
+        pub.subscribe(self.update_first, 'start')
 
 
     #----------------------------------------------------------------------
@@ -204,6 +205,9 @@ class MainPanel(wx.Panel):
         print ("update thread started!")
         self.timer.Stop()
         controller.ProcThread()
+
+    def update_first(self):
+        self.update("")
 
     #----------------------------------------------------------------------
     def updateDisplay(self, procs, bad_procs):

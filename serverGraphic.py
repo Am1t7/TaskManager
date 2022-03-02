@@ -216,6 +216,7 @@ class PcPanel(wx.Panel):
 
             self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
+
             #adding to the main sizer
             self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
             self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
@@ -243,6 +244,7 @@ class PcPanel(wx.Panel):
         #self.frame.task.Show()
         frame = TaskFrame(self.mac_string, self.q)
         panel = TaskPanel(self, self.q, self.mac_string)
+        self.q.put(server_pro.build_start())
         frame.Show()
 
 
