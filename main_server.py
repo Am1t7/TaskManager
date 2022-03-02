@@ -19,6 +19,10 @@ server_db = DB()
 used_port = [setting.SERVER_PORT]
 procs = []
 bad_procs = []
+
+mac_ip_dic = {}
+
+
 def get_port():
     port = random.randint(1000,2000)
     while port in used_port:
@@ -28,10 +32,11 @@ def get_port():
 
 def handle_sending_msgs(msg_q, comm):
     while True:
-        data_send = msg_q.get()
+        mac, data_send = msg_q.get()
         print(data_send)
         #send_msg = server_pro.break_msg(data_send)
-        comm.send_msg('127.0.0.1', str(data_send))
+        print("send to :", mac_ip_dic[mac])
+        comm.send_msg(mac_ip_dic[mac], str(data_send))
 
 def main_loop(msg_q, comm):
     global procs
@@ -43,45 +48,52 @@ def main_loop(msg_q, comm):
     count = 0
     while True:
         data = msg_q.get()
-        msg = server_pro.break_msg(data)
+        #print("main server: ",ip,data)
+        if data[1] == "ping":
+            pass #print("get ping")
+        elif data[1] == "new":
+            pass #print("get new")
+        else:
+            msg = server_pro.break_msg(data)
 
-        if msg[0] == "02":
-            wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]), pass_limit = False, created=False)
-            mac = str(msg[1])
-            server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
-            #port = get_port()
-            #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
-            #build...(port)
-            # sne msg
+            if msg[0] == "02":
+                wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]), pass_limit = False, created=False)
+                mac = str(msg[1])
+                server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
+                #port = get_port()
+                #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
+                #build...(port)
+                # sne msg
+                mac_ip_dic[mac] = data[0]
 
-        elif msg[0] == "01":
-            p = Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7])
-            procs.append(p)
-            if float(msg[5]) > float(server_db.get_cpu_limits_value(mac)):
-                bad_procs.append(procs.index(p))
-            if float(msg[6]) > float(server_db.get_mem_limits_value(mac)):
-                bad_procs.append(procs.index(p))
-            if float(msg[7]) > float(server_db.get_disk_limits_value(mac)):
-                bad_procs.append(procs.index(p))
-            for s in server_db.get_soft_value(mac):
-                if str(s) == p.name:
+            elif msg[0] == "01":
+                p = Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7])
+                procs.append(p)
+                if float(msg[5]) > float(server_db.get_cpu_limits_value(mac)):
                     bad_procs.append(procs.index(p))
-            cpu_percent += float(msg[5])
-            mem_percent += float(msg[6])
-            disk_percent += float(msg[7])
-            count += 1
-            #proc = msg[1].split(",")
-            #print(proc)
+                if float(msg[6]) > float(server_db.get_mem_limits_value(mac)):
+                    bad_procs.append(procs.index(p))
+                if float(msg[7]) > float(server_db.get_disk_limits_value(mac)):
+                    bad_procs.append(procs.index(p))
+                for s in server_db.get_soft_value(mac):
+                    if str(s) == p.name:
+                        bad_procs.append(procs.index(p))
+                cpu_percent += float(msg[5])
+                mem_percent += float(msg[6])
+                disk_percent += float(msg[7])
+                count += 1
+                #proc = msg[1].split(",")
+                #print(proc)
 
-        elif msg[0] == "03":
-            wx.CallAfter(pub.sendMessage, 'update_server', procs = procs, bad_procs = bad_procs)
-            wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
-            procs = []
-            bad_procs = []
-            count = 0
-            cpu_percent = 0
-            mem_percent = 0
-            disk_percent = 0
+            elif msg[0] == "03":
+                wx.CallAfter(pub.sendMessage, 'update_server', procs = procs, bad_procs = bad_procs)
+                wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
+                procs = []
+                bad_procs = []
+                count = 0
+                cpu_percent = 0
+                mem_percent = 0
+                disk_percent = 0
 
         #elif msg[0] == "04":
          #   wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=msg[1], totalcpu=msg[2], totalmem=msg[3], totaldisk=msg[4])

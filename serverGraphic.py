@@ -204,7 +204,7 @@ class PcPanel(wx.Panel):
         '''
         if created == False:
             #creating the pc logo button
-            self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize)
+            self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize, name=mac)
             self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
             #create the text with the mac address
             self.macText = wx.StaticText(self, -1, str(mac))
@@ -242,9 +242,11 @@ class PcPanel(wx.Panel):
     def handle_pc(self, event):
         #self.Hide()
         #self.frame.task.Show()
-        frame = TaskFrame(self.mac_string, self.q)
-        panel = TaskPanel(self, self.q, self.mac_string)
-        self.q.put(server_pro.build_start())
+        mac = event.GetEventObject().GetName()
+        print("press mac  ", mac)
+        frame = TaskFrame(mac, self.q)
+        panel = TaskPanel(self, self.q, mac)
+        self.q.put((mac,server_pro.build_start()))
         frame.Show()
 
 
@@ -367,7 +369,7 @@ class TaskPanel(wx.Panel):
         Kill the selected process by pid
         """
         obj = self.procmonOlv.GetSelectedObject()
-        self.q.put(server_pro.build_close_proc(obj.pid))
+        self.q.put((self.mac, server_pro.build_close_proc(obj.pid)))
 
         '''
         obj = self.procmonOlv.GetSelectedObject()
@@ -414,7 +416,7 @@ class TaskPanel(wx.Panel):
         dlg.SetValue("")
         if dlg.ShowModal() == wx.ID_OK:
             self.db.add_ban(self.mac, dlg.GetValue())
-            self.q.put(server_pro.build_ban_proc(dlg.GetValue()))
+            self.q.put((self.mac, server_pro.build_ban_proc(dlg.GetValue())))
         dlg.Destroy()
 
     def onUnbanProcess(self, event):
@@ -422,14 +424,14 @@ class TaskPanel(wx.Panel):
         dlg.SetValue("")
         if dlg.ShowModal() == wx.ID_OK:
             self.db.delete_ban_proc(self.mac, dlg.GetValue())
-            self.q.put(server_pro.build_unban_proc(dlg.GetValue()))
+            self.q.put((self.mac, server_pro.build_unban_proc(dlg.GetValue())))
         dlg.Destroy()
 
     def onshutpc(self,event):
-        self.q.put(server_pro.build_close_pc())
+        self.q.put((self.mac, server_pro.build_close_pc()))
 
     def onclosesys(self, event):
-        self.q.put(server_pro.build_close_sys())
+        self.q.put((self.mac , server_pro.build_close_sys()))
         self.frame.Destroy()
 
 
@@ -574,13 +576,13 @@ class LimitsPanel(wx.Panel):
         disk = self.diskField.GetValue()
         if cpu != "":
             self.db.update_cpu_value(cpu)
-            self.q.put(server_pro.build_set_limits("CPU", str(cpu)))
+            self.q.put((self.mac, server_pro.build_set_limits("CPU", str(cpu))))
         if mem != "":
             self.db.update_mem_value(mem)
-            self.q.put(server_pro.build_set_limits("Memory", str(mem)))
+            self.q.put((self.mac, server_pro.build_set_limits("Memory", str(mem))))
         if disk != "":
             self.db.update_disk_value(disk)
-            self.q.put(server_pro.build_set_limits("Disk", str(disk)))
+            self.q.put((self.mac, server_pro.build_set_limits("Disk", str(disk))))
         self.frame.Close()
 
 

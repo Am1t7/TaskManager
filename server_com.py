@@ -63,6 +63,9 @@ class server_com():
                     client, address = self.my_socket.accept()
                     print(f'{address[0]} - connected')
                     self.open_clients[client] = address[0]
+                    #print("before")
+                    #self.msg_q.put((address[0], "new"))
+                    #print("after")
 
                 else:
                     try:
@@ -97,6 +100,8 @@ class server_com():
             except Exception as e:
                 print("serv_com send msg: ",str(e))
                 pass
+        else:
+            print("no soc")
 
 
 

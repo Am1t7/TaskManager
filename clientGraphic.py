@@ -355,7 +355,7 @@ class MainFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self, send_q):
         """Constructor"""
-        wx.Frame.__init__(self, None, title="PyProcMon", size=(1024, 768))
+        wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768))
         panel = MainPanel(self, send_q)
         
         # set up the statusbar
