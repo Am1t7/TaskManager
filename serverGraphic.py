@@ -197,36 +197,48 @@ class PcPanel(wx.Panel):
         self.Hide()
 
 
-    def add_pc(self, mac, pass_limit, created):
+    def add_pc(self, mac, pass_limit, created, count):
         '''
         adding pc to the connected pc view
         :param mac: the mac address of the pc
         :return:
         '''
+
         if created == False:
             #creating the pc logo button
             self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize, name=mac)
             self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
             #create the text with the mac address
             self.macText = wx.StaticText(self, -1, str(mac))
-            font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+            font = wx.Font(11, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
             self.macText.SetFont(font)
             self.mac_string = mac
             #adding to the sizers
+            if count > 1:
+                self.macBox.AddSpacer(20)
+                self.pc_box.AddSpacer(30)
             self.macBox.Add(self.macText, 0, wx.ALL, 5)
-
             self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
-
             #adding to the main sizer
+            #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+            #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
+
+            #self.macBox.Clear()
+            #self.pc_box.Clear()
+            #created = True
+            print(count)
+        if count == 1:
             self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
             self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
-            created = True
+
+
         elif created and pass_limit == False:
             self.macText.SetBackgroundColour(wx.WHITE)
         elif created and pass_limit == True:
             self.macText.SetBackgroundColour(wx.RED)
         self.mainSizer.Layout()
+
 
     def del_pc(self):
         '''
@@ -241,8 +253,6 @@ class PcPanel(wx.Panel):
 
 
     def handle_pc(self, event):
-        #self.Hide()
-        #self.frame.task.Show()
         mac = event.GetEventObject().GetName()
         print("press mac  ", mac)
         frame = TaskFrame(mac, self.q)

@@ -47,6 +47,7 @@ def main_loop(msg_q, comm):
     mem_percent = 0
     disk_percent = 0
     count = 0
+    pc_count = 0
     while True:
         data = msg_q.get()
         ip = data[0]
@@ -59,8 +60,9 @@ def main_loop(msg_q, comm):
             msg = server_pro.break_msg(data)
 
             if msg[0] == "02":
+                pc_count+=1
                 mac = str(msg[1]).replace(":", "-")
-                wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False)
+                wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
 
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()
