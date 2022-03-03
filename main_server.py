@@ -38,6 +38,7 @@ def handle_sending_msgs(msg_q, comm):
         print("send to :", mac_ip_dic[mac])
         comm.send_msg(mac_ip_dic[mac], str(data_send))
 
+
 def main_loop(msg_q, comm):
     global procs
     global mac
@@ -48,6 +49,7 @@ def main_loop(msg_q, comm):
     count = 0
     while True:
         data = msg_q.get()
+        ip = data[0]
         #print("main server: ",ip,data)
         if data[1] == "ping":
             pass #print("get ping")
@@ -57,9 +59,10 @@ def main_loop(msg_q, comm):
             msg = server_pro.break_msg(data)
 
             if msg[0] == "02":
-                wx.CallAfter(pub.sendMessage, 'add', mac = str(msg[1]), pass_limit = False, created=False)
-                mac = str(msg[1])
-                server_db.pc_limit_add(str(msg[1]), 1000, 1000, 1000)
+                mac = str(msg[1]).replace(":", "-")
+                wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False)
+
+                server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()
                 #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
                 #build...(port)
@@ -86,20 +89,24 @@ def main_loop(msg_q, comm):
                 #print(proc)
 
             elif msg[0] == "03":
-                wx.CallAfter(pub.sendMessage, 'update_server', procs = procs, bad_procs = bad_procs)
-                wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
-                procs = []
-                bad_procs = []
-                count = 0
-                cpu_percent = 0
-                mem_percent = 0
-                disk_percent = 0
+                mac = None
+                for ind in mac_ip_dic.keys():
+                    if mac_ip_dic[ind] == ip:
+                        mac = ind
+                        break
+                if mac:
+                    print(mac, 20*'---')
 
-        #elif msg[0] == "04":
-         #   wx.CallAfter(pub.sendMessage, 'update_status_server', procsnum=msg[1], totalcpu=msg[2], totalmem=msg[3], totaldisk=msg[4])
+                    wx.CallAfter(pub.sendMessage, f"{mac}update_server", procs = procs, bad_procs = bad_procs)
+                    wx.CallAfter(pub.sendMessage, f"{mac}update_status_server", procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)
+                    procs = []
+                    bad_procs = []
+                    count = 0
+                    cpu_percent = 0
+                    mem_percent = 0
+                    disk_percent = 0
 
-
-        print("------------------------------------",msg)
+            print("------------------------------------",msg)
 
 
 
@@ -112,5 +119,6 @@ threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()
 server_db.add_user("amit", hashlib.md5("12345".encode()).hexdigest())
 
 app = wx.App(False)
+print("dffff", mac)
 frame = serverGraphic.ServerFrame(send_q=send_msg_q, mac=mac)
 app.MainLoop()

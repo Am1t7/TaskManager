@@ -43,10 +43,11 @@ class TaskFrame(wx.Frame):
         panel = TaskPanel(self, send_q, mac)
 
         self.CreateStatusBar()
+        self.mac = mac
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
 
-        pub.subscribe(self.updateStatusbar, 'update_status_server')
+        pub.subscribe(self.updateStatusbar, f'{self.mac} - update_status_server')
 
 
     def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
@@ -331,7 +332,9 @@ class TaskPanel(wx.Panel):
         self.update("")
         self.setProcs()
 
-        pub.subscribe(self.updateDisplay_server, 'update_server')
+        print("hellllll    ",self.mac)
+        flag = f"{self.mac}update_server"
+        pub.subscribe(self.updateDisplay_server, flag )
         #self.procmonOlv.Show()
         #self.Layout()
         #self.Hide()

@@ -45,7 +45,7 @@ class Client_com():
 
     def _recv_loop(self):
         while self.server_on:
-            print("1 ", self.server_on)
+            print("3", self.server_on)
             try:
                 #recv the data
                 data_len = self.my_socket.recv(4).decode()
@@ -58,13 +58,13 @@ class Client_com():
                 #put in q
                 print("client recv: ", data)
                 self.msg_q.put( data)
-
-    def _ping(self):
-        while True:
-            #print("ping ", self.server_on)
-            if self.server_on:
-                self.send("ping")
-            time.sleep(1.0)
+    #
+    # def _ping(self):
+    #     while True:
+    #         #print("ping ", self.server_on)
+    #         if self.server_on:
+    #             self.send("ping")
+    #         time.sleep(1.0)
 
 
     def send(self, msg):
