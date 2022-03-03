@@ -44,20 +44,21 @@ class Client_com():
                     print("11 ", self.server_on)
 
     def _recv_loop(self):
-        while self.server_on:
-            print("3", self.server_on)
-            try:
-                #recv the data
-                data_len = self.my_socket.recv(4).decode()
-                data = self.my_socket.recv(int(data_len)).decode()
-            except Exception as e:
-                print("recv data client_com", str(e))
-                self.server_on = False
-                self.my_socket.close()
-            else:
-                #put in q
-                print("client recv: ", data)
-                self.msg_q.put( data)
+        while True:
+            while self.server_on:
+                print("3", self.server_on)
+                try:
+                    #recv the data
+                    data_len = self.my_socket.recv(4).decode()
+                    data = self.my_socket.recv(int(data_len)).decode()
+                except Exception as e:
+                    print("recv data client_com", str(e))
+                    self.server_on = False
+                    self.my_socket.close()
+                else:
+                    #put in q
+                    print("client recv: ", data)
+                    self.msg_q.put( data)
     #
     # def _ping(self):
     #     while True:
