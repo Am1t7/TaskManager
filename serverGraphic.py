@@ -175,14 +175,14 @@ class PcPanel(wx.Panel):
         self.frame = parent
 
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.pc_box = wx.BoxSizer(wx.VERTICAL)
+        self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
         self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
         self.pcImg.Rescale(100, 100)
         self.pcBmp = wx.Bitmap(self.pcImg)
         self.pcBtn = None
         self.mac_string = None
 
-        self.macBox = wx.BoxSizer(wx.VERTICAL)
+        self.macBox = wx.BoxSizer(wx.HORIZONTAL)
         self.macText = None
         self.q = send_q
 
