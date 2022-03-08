@@ -64,6 +64,9 @@ def main_loop(msg_q, comm):
                 mac = str(msg[1]).replace(":", "-")
                 wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
 
+
+
+
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()
                 #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)

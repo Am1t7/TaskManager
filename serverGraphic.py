@@ -215,10 +215,23 @@ class PcPanel(wx.Panel):
             self.mac_string = mac
             #adding to the sizers
             if count > 1:
-                self.macBox.AddSpacer(20)
+                self.macBox.AddSpacer(15)
                 self.pc_box.AddSpacer(30)
+
+            if count % 7 == 0:
+                new_pc_box = wx.BoxSizer(wx.HORIZONTAL)
+                new_mac_box = wx.BoxSizer(wx.HORIZONTAL)
+                new_pc_box.Add(self.pcBtn)
+                new_mac_box.Add(self.macText)
+                self.mainSizer.Add(new_pc_box, 0, wx.LEFT, 5)
+                self.mainSizer.Add(new_mac_box, 0, wx.LEFT, 5)
+
+
             self.macBox.Add(self.macText, 0, wx.ALL, 5)
             self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
+
+
+
 
             #adding to the main sizer
             #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
