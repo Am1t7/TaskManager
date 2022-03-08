@@ -7,9 +7,13 @@ import wx
 import threading
 from pubsub import pub
 import uuid
+import RSAClass
+import AESCipher
 
 
 mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
+rsa_obj = RSAClass.RSAClass()
+rsa_pub_key = rsa_obj.get_public_key_pem()
 
 def handle_sending_msgs(msg_q, comm):
     while True:

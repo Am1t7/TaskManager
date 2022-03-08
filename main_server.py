@@ -11,6 +11,9 @@ import random
 from model import Process
 from serverDB import DB
 import hashlib
+import string as string_c
+import RSAClass
+import AESCipher
 
 
 
@@ -19,7 +22,8 @@ server_db = DB()
 used_port = [setting.SERVER_PORT]
 procs = []
 bad_procs = []
-
+key_lst = []
+rsa_obj = RSAClass.RSAClass()
 mac_ip_dic = {}
 
 
@@ -38,11 +42,31 @@ def handle_sending_msgs(msg_q, comm):
         print("send to :", mac_ip_dic[mac])
         comm.send_msg(mac_ip_dic[mac], str(data_send))
 
+def gen_key():
+    # string that contains all the letters + all the digits
+    l = string_c.ascii_letters + "123456789"
+    string = ''
+
+    # randomizing a 16 char long string
+    for i in range(16):
+        char = random.choice(l)
+        string += char
+
+    # checking if the string isn't being used already as a symetric key
+    if string in key_lst:
+        return gen_key()
+
+    else:
+        # if it isn't being used , add to the symetric key list and return the key
+        key_lst.append(string)
+        return string
+
 
 def main_loop(msg_q, comm):
     global procs
     global mac
     global bad_procs
+    global send_msg_q
     cpu_percent = 0
     mem_percent = 0
     disk_percent = 0
@@ -62,11 +86,11 @@ def main_loop(msg_q, comm):
             if msg[0] == "02":
                 pc_count+=1
                 mac = str(msg[1]).replace(":", "-")
+                print(msg)
+                cl_pub_key = msg[2]
+                sym_key = gen_key()
+                send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
                 wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
-
-
-
-
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()
                 #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)

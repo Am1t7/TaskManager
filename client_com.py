@@ -3,7 +3,7 @@ import threading
 import uuid
 import client_pro
 import time
-
+import RSAClass
 class Client_com():
     '''
     constructor
@@ -16,6 +16,8 @@ class Client_com():
         self.my_socket = None
         self.mac = ':'.join(
             ['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
+        self.rsa_obj = RSAClass.RSAClass()
+        self.rsa_pub_key = self.rsa_obj.get_public_key_pem()
         threading.Thread(target=self._main_loop).start()
         threading.Thread(target=self._recv_loop).start()
         #threading.Thread(target=self._ping).start()
@@ -35,7 +37,8 @@ class Client_com():
                 try:
                     #try connecting
                     self.my_socket.connect((self.server_ip, self.server_port))
-                    self.send(client_pro.build_mac(self.mac))
+                    self.send(client_pro.build_mac(self.mac, self.rsa_pub_key))
+                    #self.send(self.rsa_pub_key)
                 except Exception as e:
                     print("connect error: ",str(e))
                     pass

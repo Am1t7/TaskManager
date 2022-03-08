@@ -11,6 +11,7 @@ import client_pro
 import os
 
 
+
 ########################################################################
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 class MainPanel(wx.Panel):

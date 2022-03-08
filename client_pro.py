@@ -5,8 +5,8 @@
 def build_proc(name, pid, exe, username, cpu, mem, disk):
     return f'01{name},{pid},{exe},{username},{cpu},{mem},{disk}'
 
-def build_mac(mac):
-    return f'02{mac}'
+def build_mac(mac, pub_key):
+    return f'02{mac},{pub_key}'
 
 
 def build_response(func_code, type):
