@@ -27,8 +27,7 @@ def build_close_pc():
 
 def build_key(key):
     # return f'11{key}'
-    ret = f'11{key}'
-    print(ret)
+    ret = b'11' + key
     return ret
 
 def build_start():

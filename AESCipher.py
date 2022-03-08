@@ -41,6 +41,9 @@ class AESCipher(object):
         :param s: String
         :return: makes it 64 bits
         """
+        if type(s) == bytes:
+            s = s.decode()
+
         return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
 
     @staticmethod

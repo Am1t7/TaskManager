@@ -35,8 +35,6 @@ def encrypt_msg(data, pubkeyPEM):
     :return: encrypted message
     '''
     result = None
-    print(data, pubkeyPEM, type(pubkeyPEM))
-    pubkeyPEM = pubkeyPEM.decode()
     try:
         pubkey = RSA.import_key(pubkeyPEM)
     except Exception as e:

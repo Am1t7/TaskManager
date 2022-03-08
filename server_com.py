@@ -22,6 +22,7 @@ class server_com():
         self.open_clients = {}
         self.key_lst = []
         self.aes_obj = None
+
         threading.Thread(target=self._main_loop).start()
 
 
@@ -104,9 +105,7 @@ class server_com():
                     else:
                         if data[:2] == "04":
                             cl_pub_key = data[2:]
-                            print(cl_pub_key)
                             sym_key = self.gen_key()
-                            print(sym_key)
                             self.aes_obj = AESCipher.AESCipher(sym_key)
                             enc_sym_key = RSAClass.encrypt_msg(sym_key, cl_pub_key)
                             self.send_msg(self._get_ip_by_socket(current_socket), server_pro.build_key(enc_sym_key))
@@ -127,12 +126,17 @@ class server_com():
 
     def send_msg(self, ip, msg):
         soc = self._get_socket_by_ip(ip)
+        if type(msg) == str:
+            msg = msg.encode()
+
         if soc:
+            if msg[:2] != b'11':
+                msg = self.aes_obj.encrypt(msg)
             try:
-                enc_msg = self.aes_obj.encrypt(msg)
-                soc.send((str(len(enc_msg)).zfill(4)).encode())
-                soc.send(str(enc_msg).encode())
+                soc.send((str(len(msg)).zfill(4)).encode())
+                soc.send(msg)
             except Exception as e:
+                print(msg)
                 print("serv_com send msg: ",str(e))
                 pass
         else:

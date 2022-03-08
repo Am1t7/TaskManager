@@ -53,7 +53,9 @@ def main_loop(msg_q):
 
         if msg[0] == "05":
             #frame.Destroy()
+            print("50 shekel")
             wx.CallAfter(pub.sendMessage, 'close', )
+            print(client_com.Client_com.get_socket(comm))
             client_com.Client_com.get_socket(comm).close()
 
         if msg[0] == "10":
