@@ -85,7 +85,6 @@ def main_loop(msg_q, comm):
             if msg[0] == "02":
                 pc_count+=1
                 mac = str(msg[1]).replace(":", "-")
-                print(msg)
                 #cl_pub_key = msg[2]
                 #sym_key = gen_key()
                 #send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
@@ -123,7 +122,6 @@ def main_loop(msg_q, comm):
                         mac = ind
                         break
                 if mac:
-                    print(mac, 20*'---')
 
                     wx.CallAfter(pub.sendMessage, f"{mac}update_server", procs = procs, bad_procs = bad_procs)
                     wx.CallAfter(pub.sendMessage, f"{mac}update_status_server", procsnum=count, totalcpu=cpu_percent, totalmem=mem_percent,totaldisk=disk_percent)

@@ -20,19 +20,21 @@ class Client_com():
         self.rsa_obj = RSAClass.RSAClass()
         self.rsa_pub_key = self.rsa_obj.get_public_key_pem().decode()
         self.sym_key = None
+        self.running = True
         threading.Thread(target=self._main_loop).start()
         threading.Thread(target=self._recv_loop).start()
         #threading.Thread(target=self._ping).start()
 
 
-
+    def stop_threads(self):
+        self.running = False
     def _main_loop(self):
         '''
         the main loop that recv and put the msg in queue
         :return:
         '''
-        while True:
-            while not self.server_on:
+        while self.running:
+            while not self.server_on and self.running:
                 # creating the socket
                 self.my_socket = socket.socket()
                 print("1 ", self.server_on)
@@ -52,8 +54,8 @@ class Client_com():
 
     def _recv_loop(self):
         count = 0
-        while True:
-            while self.server_on:
+        while self.running:
+            while self.server_on and self.running:
                 print("3", self.server_on)
                 try:
                     #recv the data

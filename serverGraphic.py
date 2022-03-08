@@ -240,7 +240,6 @@ class PcPanel(wx.Panel):
             #self.macBox.Clear()
             #self.pc_box.Clear()
             #created = True
-            print(count)
         if count == 1:
             self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
             self.mainSizer.Add(self.macBox,0,wx.LEFT,5)

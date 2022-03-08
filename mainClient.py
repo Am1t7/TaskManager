@@ -9,19 +9,24 @@ from pubsub import pub
 import uuid
 import RSAClass
 import AESCipher
+import sys
+import time
 
 
 mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 rsa_obj = RSAClass.RSAClass()
 rsa_pub_key = rsa_obj.get_public_key_pem()
+running = True
 
 def handle_sending_msgs(msg_q, comm):
-    while True:
+    global running
+    while running:
         procs = msg_q.get()
-        for p in procs:
-            comm.send(client_pro.build_proc(p.name, p.pid, p.exe, p.user, p.cpu, p.mem, p.disk))
-            #comm.send(client_pro.build_bad_procs(p.name, p.pid, p.exe, p.name, p.cpu, p.mem, p.disk))
-        comm.send(client_pro.build_done())
+        if procs != "close":
+            for p in procs:
+                comm.send(client_pro.build_proc(p.name, p.pid, p.exe, p.user, p.cpu, p.mem, p.disk))
+                #comm.send(client_pro.build_bad_procs(p.name, p.pid, p.exe, p.name, p.cpu, p.mem, p.disk))
+            comm.send(client_pro.build_done())
 
         #time.sleep(10)
         #comm.send(str(procs[0].name))
@@ -32,7 +37,8 @@ def handle_sending_msgs(msg_q, comm):
 
 
 def main_loop(msg_q):
-    while True:
+    global running
+    while running:
         data = msg_q.get()
         msg = client_pro.break_msg(data)
 
@@ -52,11 +58,10 @@ def main_loop(msg_q):
             wx.CallAfter(pub.sendMessage, 'shut',)
 
         if msg[0] == "05":
-            #frame.Destroy()
-            print("50 shekel")
             wx.CallAfter(pub.sendMessage, 'close', )
-            print(client_com.Client_com.get_socket(comm))
+            #print(client_com.Client_com.get_socket(comm))
             client_com.Client_com.get_socket(comm).close()
+            close_client()
 
         if msg[0] == "10":
             wx.CallAfter(pub.sendMessage, 'start', )
@@ -70,6 +75,17 @@ def main_loop(msg_q):
         print("client recv ---------------------------",msg)
 
 
+
+def close_client():
+    global running
+    running = False
+    recv_msg_q.put("ffff")
+    send_msg_q.put("close")
+    comm.stop_threads()
+
+
+
+pub.subscribe(close_client ,'close_cl')
 
 
 procs_comm = None

@@ -9,6 +9,7 @@ from googlesearch import search
 from clientDB import DB
 import client_pro
 import os
+import sys
 
 
 
@@ -61,6 +62,7 @@ class MainPanel(wx.Panel):
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
 
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -259,6 +261,9 @@ class MainPanel(wx.Panel):
     def close_sys(self):
         self.frame.Destroy()
 
+    def OnExit(self):
+        print("90909090 exit 09090990")
+
 
 
 
@@ -364,6 +369,8 @@ class MainFrame(wx.Frame):
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
 
+        self.Bind(wx.EVT_CLOSE, self._when_closed)
+
 
         # create a pubsub receiver
         pub.subscribe(self.updateStatusbar ,'update_status')
@@ -382,6 +389,14 @@ class MainFrame(wx.Frame):
         self.SetStatusText("CPU Usage: %s" % cpu, 1)
         self.SetStatusText("Physical Memory: %s" % mem, 2)
         self.SetStatusText("Disk: %s" % disk, 3)
+
+    def _when_closed(self, event):
+        print("in close")
+        self.DestroyChildren()
+        self.Destroy()
+        wx.CallAfter(pub.sendMessage, 'close_cl', )
+
+        #sys.exit("bye bye")
 
         
 
