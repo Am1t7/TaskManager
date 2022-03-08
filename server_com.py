@@ -3,6 +3,11 @@ import threading
 import select
 import wx
 from pubsub import pub
+import RSAClass
+import string as string_c
+import random
+import server_pro
+import AESCipher
 
 class server_com():
     '''
@@ -15,6 +20,8 @@ class server_com():
         self.server_port = server_port
         self.msg_q = msg_q
         self.open_clients = {}
+        self.key_lst = []
+        self.aes_obj = None
         threading.Thread(target=self._main_loop).start()
 
 
@@ -43,6 +50,25 @@ class server_com():
                 socket = soc
                 break
         return socket
+
+    def gen_key(self):
+        # string that contains all the letters + all the digits
+        l = string_c.ascii_letters + "123456789"
+        string = ''
+
+        # randomizing a 16 char long string
+        for i in range(16):
+            char = random.choice(l)
+            string += char
+
+        # checking if the string isn't being used already as a symetric key
+        if string in self.key_lst:
+            return self.gen_key()
+
+        else:
+            # if it isn't being used , add to the symetric key list and return the key
+            self.key_lst.append(string)
+            return string
 
 
     def _main_loop(self):
@@ -76,7 +102,15 @@ class server_com():
                         print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)
                     else:
-                        if data != "":
+                        if data[:2] == "04":
+                            cl_pub_key = data[2:]
+                            print(cl_pub_key)
+                            sym_key = self.gen_key()
+                            print(sym_key)
+                            self.aes_obj = AESCipher.AESCipher(sym_key)
+                            enc_sym_key = RSAClass.encrypt_msg(sym_key, cl_pub_key)
+                            self.send_msg(self._get_ip_by_socket(current_socket), server_pro.build_key(enc_sym_key))
+                        elif data != "":
                             #put in q
                             self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         else:
@@ -95,8 +129,9 @@ class server_com():
         soc = self._get_socket_by_ip(ip)
         if soc:
             try:
-                soc.send((str(len(msg)).zfill(4)).encode())
-                soc.send(str(msg).encode())
+                enc_msg = self.aes_obj.encrypt(msg)
+                soc.send((str(len(enc_msg)).zfill(4)).encode())
+                soc.send(str(enc_msg).encode())
             except Exception as e:
                 print("serv_com send msg: ",str(e))
                 pass

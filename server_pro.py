@@ -25,6 +25,11 @@ def build_unban_proc(name):
 def build_close_pc():
     return f'09shut'
 
+def build_key(key):
+    # return f'11{key}'
+    ret = f'11{key}'
+    print(ret)
+    return ret
 
 def build_start():
     return "10start"

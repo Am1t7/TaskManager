@@ -66,7 +66,6 @@ def main_loop(msg_q, comm):
     global procs
     global mac
     global bad_procs
-    global send_msg_q
     cpu_percent = 0
     mem_percent = 0
     disk_percent = 0
@@ -87,9 +86,9 @@ def main_loop(msg_q, comm):
                 pc_count+=1
                 mac = str(msg[1]).replace(":", "-")
                 print(msg)
-                cl_pub_key = msg[2]
-                sym_key = gen_key()
-                send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
+                #cl_pub_key = msg[2]
+                #sym_key = gen_key()
+                #send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
                 wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()

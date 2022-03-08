@@ -28,6 +28,20 @@ class RSAClass:
 
 
 def encrypt_msg(data, pubkeyPEM):
-    pubkey = RSA.import_key(pubkeyPEM)
-    encryptor = PKCS1_OAEP.new(pubkey)
-    return encryptor.encrypt(data.encode())
+    '''
+    encrypt message with the given public key
+    :param data: the plain text in string
+    :param pubkey: the public key
+    :return: encrypted message
+    '''
+    result = None
+    print(data, pubkeyPEM, type(pubkeyPEM))
+    pubkeyPEM = pubkeyPEM.decode()
+    try:
+        pubkey = RSA.import_key(pubkeyPEM)
+    except Exception as e:
+        print(e)
+    else:
+        encryptor = PKCS1_OAEP.new(pubkey)
+        result = encryptor.encrypt(data.encode())
+    return result
