@@ -506,9 +506,9 @@ class TaskPanel(wx.Panel):
         self.procs = procs
         self.bad_procs = bad_procs
         if len(bad_procs) != 0:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True)
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True, count=0)
         else:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True)
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True, count=0)
         self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)
