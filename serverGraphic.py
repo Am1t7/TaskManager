@@ -26,10 +26,16 @@ class ServerFrame(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
         box.Add(main_panel, 1, wx.EXPAND)
 
+        self.Bind(wx.EVT_CLOSE, self._when_closed)
 
         self.SetSizer(box)
         self.Layout()
         self.Show()
+
+    def _when_closed(self, event):
+        self.DestroyChildren()
+        self.Destroy()
+        wx.CallAfter(pub.sendMessage, 'close_sr', )
 
 
 

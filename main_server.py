@@ -25,6 +25,7 @@ bad_procs = []
 key_lst = []
 rsa_obj = RSAClass.RSAClass()
 mac_ip_dic = {}
+running = True
 
 
 def get_port():
@@ -35,12 +36,11 @@ def get_port():
     return port
 
 def handle_sending_msgs(msg_q, comm):
-    while True:
+    global running
+    while running:
         mac, data_send = msg_q.get()
-        print(data_send)
-        #send_msg = server_pro.break_msg(data_send)
-        print("send to :", mac_ip_dic[mac])
-        comm.send_msg(mac_ip_dic[mac], str(data_send))
+        if mac != "112233":
+            comm.send_msg(mac_ip_dic[mac], str(data_send))
 
 def gen_key():
     # string that contains all the letters + all the digits
@@ -66,12 +66,13 @@ def main_loop(msg_q, comm):
     global procs
     global mac
     global bad_procs
+    global running
     cpu_percent = 0
     mem_percent = 0
     disk_percent = 0
     count = 0
     pc_count = 0
-    while True:
+    while running:
         data = msg_q.get()
         ip = data[0]
         #print("main server: ",ip,data)
@@ -136,6 +137,16 @@ def main_loop(msg_q, comm):
 
 
 
+def close_server():
+    global running
+    running = False
+    msg_q.put("ffff")
+    send_msg_q.put(("112233","close"))
+    comm.stop_threads()
+
+
+
+pub.subscribe(close_server ,'close_sr')
 msg_q = queue.Queue()
 send_msg_q = queue.Queue()
 comm = server_com.server_com(setting.SERVER_IP,setting.SERVER_PORT,msg_q)

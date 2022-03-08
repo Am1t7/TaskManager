@@ -22,6 +22,7 @@ class server_com():
         self.open_clients = {}
         self.key_lst = []
         self.aes_obj = None
+        self.running = True
 
         threading.Thread(target=self._main_loop).start()
 
@@ -71,7 +72,8 @@ class server_com():
             self.key_lst.append(string)
             return string
 
-
+    def stop_threads(self):
+        self.running = False
     def _main_loop(self):
         '''
         the main loop that recv msg and put it in the q and handles the clients
@@ -80,7 +82,7 @@ class server_com():
         self.my_socket.bind((self.server_ip,self.server_port))
         self.my_socket.listen(3)
 
-        while True:
+        while self.running:
 
             rlist, wlist, xlist = select.select(list(self.open_clients.keys()) + [self.my_socket], list(self.open_clients.keys()), [], 0.3)
 
