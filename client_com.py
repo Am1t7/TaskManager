@@ -53,7 +53,6 @@ class Client_com():
                     print("11 ", self.server_on)
 
     def _recv_loop(self):
-        count = 0
         while self.running:
             while self.server_on and self.running:
                 print("3", self.server_on)
@@ -76,14 +75,6 @@ class Client_com():
                         self.msg_q.put(data_dec)
 
                     print("client recv: ", data)
-    #
-    # def _ping(self):
-    #     while True:
-    #         #print("ping ", self.server_on)
-    #         if self.server_on:
-    #             self.send("ping")
-    #         time.sleep(1.0)
-
 
     def send(self, msg):
         '''

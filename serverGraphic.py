@@ -187,6 +187,7 @@ class PcPanel(wx.Panel):
         self.pcBmp = wx.Bitmap(self.pcImg)
         self.pcBtn = None
         self.mac_string = None
+        self.is_del = False
 
         self.macBox = wx.BoxSizer(wx.HORIZONTAL)
         self.macText = None
@@ -220,7 +221,7 @@ class PcPanel(wx.Panel):
             self.macText.SetFont(font)
             self.mac_string = mac
             #adding to the sizers
-            if count > 1:
+            if count > 1 and not self.is_del:
                 self.macBox.AddSpacer(15)
                 self.pc_box.AddSpacer(30)
 
@@ -236,25 +237,19 @@ class PcPanel(wx.Panel):
             self.macBox.Add(self.macText, 0, wx.ALL, 5)
             self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
 
-
-
-
-            #adding to the main sizer
-            #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-            #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
-
-            #self.macBox.Clear()
-            #self.pc_box.Clear()
-            #created = True
         if count == 1:
             self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
             self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
+
+
 
 
         elif created and pass_limit == False:
             self.macText.SetBackgroundColour(wx.WHITE)
         elif created and pass_limit == True:
             self.macText.SetBackgroundColour(wx.RED)
+
+        self.is_del = False
         self.mainSizer.Layout()
 
 
@@ -267,7 +262,7 @@ class PcPanel(wx.Panel):
         self.pc_box.Detach(self.pcBtn)
         self.macBox.Hide(self.macText)
         self.macBox.Detach(self.macText)
-
+        self.is_del = True
 
 
     def handle_pc(self, event):
