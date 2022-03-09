@@ -10,6 +10,7 @@ import server_pro
 from serverDB import DB
 import os
 import hashlib
+import wx.lib.scrolledpanel as scrolled
 
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
@@ -179,9 +180,19 @@ class PcPanel(wx.Panel):
         """Constructor"""
         wx.Panel.__init__(self, parent, size=(1024, 768))
         self.frame = parent
-
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
+        self.scrolled_panel = scrolled.ScrolledPanel(self, -1,style=wx.TAB_TRAVERSAL | wx.SUNKEN_BORDER, name="panel1")
+        self.scrolled_panel.SetAutoLayout(1)
+        self.scrolled_panel.SetupScrolling()
+        self.mainSizer.Add(self.scrolled_panel)
+        self.scr_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.scr_sizer.Add(self.row_sizer)
+        self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.row_sizer.Add(self.pc_sizer)
+        self.scrolled_panel.SetSizer(self.scr_sizer)
+
+        #self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
         self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
         self.pcImg.Rescale(100, 100)
         self.pcBmp = wx.Bitmap(self.pcImg)
@@ -189,7 +200,7 @@ class PcPanel(wx.Panel):
         self.mac_string = None
         self.is_del = False
 
-        self.macBox = wx.BoxSizer(wx.HORIZONTAL)
+        #self.macBox = wx.BoxSizer(wx.HORIZONTAL)
         self.macText = None
         self.q = send_q
 
@@ -212,6 +223,7 @@ class PcPanel(wx.Panel):
         '''
 
         if created == False:
+            
             #creating the pc logo button
             self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize, name=mac)
             self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
@@ -221,9 +233,9 @@ class PcPanel(wx.Panel):
             self.macText.SetFont(font)
             self.mac_string = mac
             #adding to the sizers
-            if count > 1 and not self.is_del:
-                self.macBox.AddSpacer(15)
-                self.pc_box.AddSpacer(30)
+            #if count > 1 and not self.is_del:
+             #   self.macBox.AddSpacer(15)
+              #  self.pc_box.AddSpacer(30)
 
             if count % 7 == 0:
                 new_pc_box = wx.BoxSizer(wx.HORIZONTAL)
@@ -234,12 +246,12 @@ class PcPanel(wx.Panel):
                 self.mainSizer.Add(new_mac_box, 0, wx.LEFT, 5)
 
 
-            self.macBox.Add(self.macText, 0, wx.ALL, 5)
-            self.pc_box.Add(self.pcBtn, 0, wx.ALL, 5)
+            self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
+            self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
 
-        if count == 1:
-            self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-            self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
+        #if count == 1:
+         #   self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
+          #  self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
 
 
 
@@ -249,25 +261,30 @@ class PcPanel(wx.Panel):
         elif created and pass_limit == True:
             self.macText.SetBackgroundColour(wx.RED)
 
-        self.is_del = False
+        #self.is_del = False
+
         self.mainSizer.Layout()
+        self.is_del = False
 
 
-    def del_pc(self):
+    def del_pc(self, mac):
         '''
-        deleting a pc from the connecting pc
+        deleting a pc from the connected pc
         :return:
         '''
-        self.pc_box.Hide(self.pcBtn)
-        self.pc_box.Detach(self.pcBtn)
-        self.macBox.Hide(self.macText)
-        self.macBox.Detach(self.macText)
-        self.is_del = True
+
+        find_pc = wx.FindWindowByName(mac)
+
+
+        # self.pc_box.Hide(self.pcBtn)
+        # self.pc_box.Detach(self.pcBtn)
+        # self.macBox.Hide(self.macText)
+        # self.macBox.Detach(self.macText)
+        # self.is_del = True
 
 
     def handle_pc(self, event):
         mac = event.GetEventObject().GetName()
-        print("press mac  ", mac)
         frame = TaskFrame(mac, self.q)
         panel = TaskPanel(self, self.q, mac)
         self.q.put((mac,server_pro.build_start()))

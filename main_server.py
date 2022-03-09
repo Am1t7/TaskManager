@@ -76,10 +76,14 @@ def main_loop(msg_q, comm):
         data = msg_q.get()
         ip = data[0]
         #print("main server: ",ip,data)
-        if data[1] == "ping":
-            pass #print("get ping")
-        elif data[1] == "new":
-            pass #print("get new")
+        if data[1] == "del":
+            mac = None
+            for ind in mac_ip_dic.keys():
+                if mac_ip_dic[ind] == ip:
+                    mac = ind
+                    break
+            if mac:
+                wx.CallAfter(pub.sendMessage, 'del', mac=mac)
         else:
             msg = server_pro.break_msg(data)
 

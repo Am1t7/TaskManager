@@ -124,7 +124,8 @@ class server_com():
         print(f"{self.open_clients[current_socket]} - disconnected")
         del self.open_clients[current_socket]
         current_socket.close()
-        wx.CallAfter(pub.sendMessage, 'del')
+        #wx.CallAfter(pub.sendMessage, 'del')
+        self.msg_q.put((self._get_ip_by_socket(current_socket), "del"))
 
     def send_msg(self, ip, msg):
         soc = self._get_socket_by_ip(ip)
