@@ -14,7 +14,7 @@ import hashlib
 import string as string_c
 import RSAClass
 import AESCipher
-
+import time
 
 
 mac = ""
@@ -93,7 +93,10 @@ def main_loop(msg_q, comm):
                 #cl_pub_key = msg[2]
                 #sym_key = gen_key()
                 #send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
-                wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
+                for i in range(0,40):
+                    time.sleep(0.2)
+                    wx.CallAfter(pub.sendMessage, 'add', mac=mac, pass_limit=False, created=False, count=i)
+                #wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()
                 #comm = server_com.server_com(setting.SERVER_IP, port, msg_q)
@@ -137,7 +140,7 @@ def main_loop(msg_q, comm):
                     mem_percent = 0
                     disk_percent = 0
 
-            print("------------------------------------",msg)
+            #print("------------------------------------",msg)
 
 
 

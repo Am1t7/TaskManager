@@ -175,22 +175,25 @@ class LoginPanel(wx.Panel):
             wx.MessageBox("not valid!!!", "Erorr", wx.OK)
 
 
-class PcPanel(wx.Panel):
+class PcPanel(scrolled.ScrolledPanel):
     def __init__(self, parent, send_q):
         """Constructor"""
-        wx.Panel.__init__(self, parent, size=(1024, 768))
+        #wx.Panel.__init__(self, parent, size=(1024, 768))
+        scrolled.ScrolledPanel.__init__(self, parent, -1, size=(1024, 768))
         self.frame = parent
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.scrolled_panel = scrolled.ScrolledPanel(self, -1,style=wx.TAB_TRAVERSAL | wx.SUNKEN_BORDER, name="panel1")
-        self.scrolled_panel.SetAutoLayout(1)
-        self.scrolled_panel.SetupScrolling()
-        self.mainSizer.Add(self.scrolled_panel)
         self.scr_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.scr_sizer.Add(self.row_sizer)
         self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.row_sizer.Add(self.pc_sizer)
-        self.scrolled_panel.SetSizer(self.scr_sizer)
+        self.scrolled_panel = scrolled.ScrolledPanel(self, -1, name="panel1", size=(1024, 768))
+        #self.scrolled_panel.SetAutoLayout(1)
+        #self.scrolled_panel.SetSizer(self.scr_sizer)
+        self.mainSizer.Add(self.scrolled_panel)
+        #self.scrolled_panel.SetupScrolling()
+
+        #self.row_sizer.Add(self.pc_sizer)
+        #self.scrolled_panel.SetSizer(self.scr_sizer)
 
         #self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
         self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
@@ -199,6 +202,7 @@ class PcPanel(wx.Panel):
         self.pcBtn = None
         self.mac_string = None
         self.is_del = False
+        #self.is_new_row = False
 
         #self.macBox = wx.BoxSizer(wx.HORIZONTAL)
         self.macText = None
@@ -232,22 +236,47 @@ class PcPanel(wx.Panel):
             font = wx.Font(11, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
             self.macText.SetFont(font)
             self.mac_string = mac
+
+            #row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            #self.scr_sizer.Add(row_sizer)
+            #pc_sizer = wx.BoxSizer(wx.VERTICAL)
+            #row_sizer.Add(pc_sizer)
             #adding to the sizers
             #if count > 1 and not self.is_del:
              #   self.macBox.AddSpacer(15)
               #  self.pc_box.AddSpacer(30)
 
-            if count % 7 == 0:
+            if count % 7 == 0 and count != 0 :
+                self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+                self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
+                self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
+                self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
+                self.row_sizer.Add(self.pc_sizer)
+                self.scr_sizer.Add(self.row_sizer)
+                #self.is_new_row = True
+                '''
                 new_pc_box = wx.BoxSizer(wx.HORIZONTAL)
                 new_mac_box = wx.BoxSizer(wx.HORIZONTAL)
                 new_pc_box.Add(self.pcBtn)
                 new_mac_box.Add(self.macText)
                 self.mainSizer.Add(new_pc_box, 0, wx.LEFT, 5)
                 self.mainSizer.Add(new_mac_box, 0, wx.LEFT, 5)
+                '''
+            #elif self.is_new_row:
 
-
-            self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
-            self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
+                #new_row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+                #self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
+                #self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
+                #self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
+                #self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
+                #self.scr_sizer.Add(new_row_sizer)
+            else:
+                print("hereeee")
+                self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
+                self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
+                self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
+                self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
+                #self.scr_sizer.Add(self.row_sizer)
 
         #if count == 1:
          #   self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
@@ -263,7 +292,13 @@ class PcPanel(wx.Panel):
 
         #self.is_del = False
 
+        #self.mainSizer.Layout()
+        self.scrolled_panel.SetSizer(self.scr_sizer)
+        self.scrolled_panel.SetupScrolling()
+        self.scrolled_panel.Layout()
         self.mainSizer.Layout()
+
+        #self.scr_sizer.Layout()
         self.is_del = False
 
 
