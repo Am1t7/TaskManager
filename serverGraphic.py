@@ -54,7 +54,7 @@ class TaskFrame(wx.Frame):
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
 
-        pub.subscribe(self.updateStatusbar, f'{self.mac} - update_status_server')
+        pub.subscribe(self.updateStatusbar, f'{self.mac}update_status_server')
 
 
     def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
@@ -186,6 +186,7 @@ class PcPanel(scrolled.ScrolledPanel):
         self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.scr_sizer.Add(self.row_sizer)
         self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.pc_objects = {}
         #self.scrolled_panel = scrolled.ScrolledPanel(self, -1, size=(1024, 768))
         #self.scrolled_panel.SetAutoLayout(1)
         #self.scrolled_panel.SetSizer(self.scr_sizer)
@@ -260,6 +261,7 @@ class PcPanel(scrolled.ScrolledPanel):
                 self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
                 #self.scr_sizer.Add(self.row_sizer)
 
+                self.pc_objects[mac] = [self.pcBtn, self.macText]
 
 
 
@@ -283,7 +285,18 @@ class PcPanel(scrolled.ScrolledPanel):
         deleting a pc from the connected pc
         :return:
         '''
-        find_pc = wx.FindWindowByName(mac)
+    # find_pc = wx.FindWindowByName(mac)
+
+        # print(type(find_pc))
+        print("in del", mac)
+
+        btn, txt = self.pc_objects[mac]
+        btn.Destroy()
+        txt.Destroy()
+
+        del self.pc_objects[mac]
+        self.Layout()
+
 
 
 

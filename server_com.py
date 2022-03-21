@@ -123,10 +123,6 @@ class server_com():
 
     def _disconnect_user(self, current_socket):
         print(f"{self.open_clients[current_socket]} - disconnected")
-        #del self.open_clients[current_socket]
-        #current_socket.close()
-        #wx.CallAfter(pub.sendMessage, 'del')
-        print(self._get_ip_by_socket(current_socket))
         self.msg_q.put((self._get_ip_by_socket(current_socket), "del"))
         del self.open_clients[current_socket]
         current_socket.close()
