@@ -79,7 +79,7 @@ def main_loop(msg_q, comm):
         if data[1] == "del":
             mac = None
             for ind in mac_ip_dic.keys():
-                if mac_ip_dic[ind] == ip:
+                if mac_ip_dic[str(ind)] == ip:
                     mac = ind
                     break
             if mac:

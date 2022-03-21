@@ -253,23 +253,6 @@ class PcPanel(scrolled.ScrolledPanel):
                 self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
                 self.row_sizer.Add(self.pc_sizer)
                 self.scr_sizer.Add(self.row_sizer)
-                #self.is_new_row = True
-                '''
-                new_pc_box = wx.BoxSizer(wx.HORIZONTAL)
-                new_mac_box = wx.BoxSizer(wx.HORIZONTAL)
-                new_pc_box.Add(self.pcBtn)
-                new_mac_box.Add(self.macText)
-                self.mainSizer.Add(new_pc_box, 0, wx.LEFT, 5)
-                self.mainSizer.Add(new_mac_box, 0, wx.LEFT, 5)
-                '''
-            #elif self.is_new_row:
-
-                #new_row_sizer = wx.BoxSizer(wx.HORIZONTAL)
-                #self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
-                #self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
-                #self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
-                #self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
-                #self.scr_sizer.Add(new_row_sizer)
             else:
                 self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
                 self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
@@ -277,9 +260,6 @@ class PcPanel(scrolled.ScrolledPanel):
                 self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
                 #self.scr_sizer.Add(self.row_sizer)
 
-        #if count == 1:
-         #   self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-          #  self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
 
 
 
@@ -289,13 +269,7 @@ class PcPanel(scrolled.ScrolledPanel):
         elif created and pass_limit == True:
             self.macText.SetBackgroundColour(wx.RED)
 
-        #self.is_del = False
 
-        #self.mainSizer.Layout()
-        #self.scrolled_panel.SetSizer(self.scr_sizer)
-        #self.scrolled_panel.SetupScrolling()
-        #self.scrolled_panel.Layout()
-        #self.mainSizer.Layout()
         self.SetSizer(self.scr_sizer)
         self.SetupScrolling()
         self.Layout()
@@ -309,8 +283,10 @@ class PcPanel(scrolled.ScrolledPanel):
         deleting a pc from the connected pc
         :return:
         '''
-
         find_pc = wx.FindWindowByName(mac)
+
+
+
 
 
         # self.pc_box.Hide(self.pcBtn)
@@ -573,9 +549,9 @@ class TaskPanel(wx.Panel):
         self.procs = procs
         self.bad_procs = bad_procs
         if len(bad_procs) != 0:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True, count=0)
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True)
         else:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True, count=0)
+            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True)
         self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)

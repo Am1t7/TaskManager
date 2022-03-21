@@ -8,6 +8,7 @@ import string as string_c
 import random
 import server_pro
 import AESCipher
+import time
 
 class server_com():
     '''
@@ -122,10 +123,13 @@ class server_com():
 
     def _disconnect_user(self, current_socket):
         print(f"{self.open_clients[current_socket]} - disconnected")
+        #del self.open_clients[current_socket]
+        #current_socket.close()
+        #wx.CallAfter(pub.sendMessage, 'del')
+        print(self._get_ip_by_socket(current_socket))
+        self.msg_q.put((self._get_ip_by_socket(current_socket), "del"))
         del self.open_clients[current_socket]
         current_socket.close()
-        #wx.CallAfter(pub.sendMessage, 'del')
-        self.msg_q.put((self._get_ip_by_socket(current_socket), "del"))
 
     def send_msg(self, ip, msg):
         soc = self._get_socket_by_ip(ip)
