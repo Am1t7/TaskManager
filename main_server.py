@@ -93,9 +93,7 @@ def main_loop(msg_q, comm):
                 #cl_pub_key = msg[2]
                 #sym_key = gen_key()
                 #send_msg_q.put(RSAClass.encrypt_msg(sym_key,cl_pub_key))
-                for i in range(0,40):
-                    time.sleep(0.2)
-                    wx.CallAfter(pub.sendMessage, 'add', mac=mac, pass_limit=False, created=False, count=i)
+                wx.CallAfter(pub.sendMessage, 'add', mac=mac, pass_limit=False, created=False)
                 #wx.CallAfter(pub.sendMessage, 'add', mac = mac, pass_limit = False, created=False, count=pc_count)
                 server_db.pc_limit_add(mac, 1000, 1000, 1000)
                 #port = get_port()

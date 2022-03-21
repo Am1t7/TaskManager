@@ -186,10 +186,10 @@ class PcPanel(scrolled.ScrolledPanel):
         self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.scr_sizer.Add(self.row_sizer)
         self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.scrolled_panel = scrolled.ScrolledPanel(self, -1, name="panel1", size=(1024, 768))
+        #self.scrolled_panel = scrolled.ScrolledPanel(self, -1, size=(1024, 768))
         #self.scrolled_panel.SetAutoLayout(1)
         #self.scrolled_panel.SetSizer(self.scr_sizer)
-        self.mainSizer.Add(self.scrolled_panel)
+        #self.mainSizer.Add(self.scrolled_panel)
         #self.scrolled_panel.SetupScrolling()
 
         #self.row_sizer.Add(self.pc_sizer)
@@ -219,7 +219,7 @@ class PcPanel(scrolled.ScrolledPanel):
         self.Hide()
 
 
-    def add_pc(self, mac, pass_limit, created, count):
+    def add_pc(self, mac, pass_limit, created):
         '''
         adding pc to the connected pc view
         :param mac: the mac address of the pc
@@ -246,7 +246,7 @@ class PcPanel(scrolled.ScrolledPanel):
              #   self.macBox.AddSpacer(15)
               #  self.pc_box.AddSpacer(30)
 
-            if count % 7 == 0 and count != 0 :
+            if len(self.row_sizer.GetChildren()) == 7:
                 self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
                 self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
                 self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
@@ -271,7 +271,6 @@ class PcPanel(scrolled.ScrolledPanel):
                 #self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
                 #self.scr_sizer.Add(new_row_sizer)
             else:
-                print("hereeee")
                 self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
                 self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
                 self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
@@ -293,10 +292,13 @@ class PcPanel(scrolled.ScrolledPanel):
         #self.is_del = False
 
         #self.mainSizer.Layout()
-        self.scrolled_panel.SetSizer(self.scr_sizer)
-        self.scrolled_panel.SetupScrolling()
-        self.scrolled_panel.Layout()
-        self.mainSizer.Layout()
+        #self.scrolled_panel.SetSizer(self.scr_sizer)
+        #self.scrolled_panel.SetupScrolling()
+        #self.scrolled_panel.Layout()
+        #self.mainSizer.Layout()
+        self.SetSizer(self.scr_sizer)
+        self.SetupScrolling()
+        self.Layout()
 
         #self.scr_sizer.Layout()
         self.is_del = False
