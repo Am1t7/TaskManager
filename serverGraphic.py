@@ -15,10 +15,16 @@ chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
 class ServerFrame(wx.Frame):
     def __init__(self,parent=None,send_q=None,mac=None):
+        '''
+        constructor
+        :param parent:
+        :param send_q: the send msg q
+        :param mac: the client mac address
+        '''
         super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         # create status bar
         self.CreateStatusBar()
-
+        self.StatusBar.SetStatusText("By: Amit Finder")
         # creating the main panel
         main_panel = MainPanel(self,send_q, mac)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -31,6 +37,11 @@ class ServerFrame(wx.Frame):
         self.Show()
 
     def _when_closed(self, event):
+        '''
+        closing the server
+        :param event:
+        :return:
+        '''
         self.DestroyChildren()
         self.Destroy()
         wx.CallAfter(pub.sendMessage, 'close_sr', )
@@ -38,14 +49,17 @@ class ServerFrame(wx.Frame):
 
 
 class TaskFrame(wx.Frame):
-    """"""
 
     #---------------------------------------------------------------------
     def __init__(self, mac, send_q):
-        """Constructor"""
+        '''
+        constructor
+        :param mac: the client mac address
+        :param send_q: the send msg q
+        '''
         wx.Frame.__init__(self, None, title=mac, size=(1024, 768))
         panel = TaskPanel(self, send_q, mac)
-
+        #creating a status bar
         self.CreateStatusBar()
         self.mac = mac
         self.StatusBar.SetFieldsCount(4)
