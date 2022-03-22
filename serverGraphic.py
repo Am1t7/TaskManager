@@ -1,14 +1,11 @@
 import wx
 from pubsub import pub
-from serverDB import DB
 from ObjectListView import ObjectListView, ColumnDefn
 import threading
-import psutil
 import webbrowser
 from googlesearch import search
 import server_pro
 from serverDB import DB
-import os
 import hashlib
 import wx.lib.scrolledpanel as scrolled
 
@@ -68,13 +65,6 @@ class TaskFrame(wx.Frame):
         self.SetStatusText("Physical Memory: %s" % mem, 2)
         self.SetStatusText("Disk: %s" % disk, 3)
 
-
-
-
-
-
-
-
 class MainPanel(wx.Panel):
     def __init__(self, parent, send_q, mac):
         #wx.Panel.__init__(self, parent=parent)
@@ -88,13 +78,11 @@ class MainPanel(wx.Panel):
         self.login = LoginPanel(self)
         self.pc = PcPanel(self, send_q)
         self.task = TaskPanel(self, send_q, mac)
-        #self.stations = StationsPanel(self, self.frame)
 
         # adding all the screen panels to the sizers
         m_box.Add(self.login,0,wx.EXPAND,0)
         m_box.Add(self.pc,0,wx.EXPAND,0)
         m_box.Add(self.task,0,wx.EXPAND,0)
-        #m_box.Add(self.stations,0,wx.EXPAND,0)
 
         self.login.Show()
 
@@ -130,7 +118,6 @@ class LoginPanel(wx.Panel):
 
         # password
         passBox = wx.BoxSizer(wx.HORIZONTAL)
-        #passText = wx.StaticText(self, 1, label="Password: ")
         passText = wx.StaticText(self, -1, "Password: ")
         font = wx.Font(16, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         passText.SetFont(font)
@@ -154,9 +141,6 @@ class LoginPanel(wx.Panel):
         sizer.Add(passBox, -1, wx.CENTER | wx.ALL, 5)
         sizer.AddSpacer(30)
         sizer.Add(btnBox, wx.CENTER | wx.ALL, 5)
-
-        # subscribe to the answer of the login function
-        #pub.subscribe(self.handle_login_ans, 'login_ans')
 
         self.SetSizer(sizer)
         self.Layout()
@@ -187,30 +171,18 @@ class PcPanel(scrolled.ScrolledPanel):
         self.scr_sizer.Add(self.row_sizer)
         self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
         self.pc_objects = {}
-        #self.scrolled_panel = scrolled.ScrolledPanel(self, -1, size=(1024, 768))
-        #self.scrolled_panel.SetAutoLayout(1)
-        #self.scrolled_panel.SetSizer(self.scr_sizer)
-        #self.mainSizer.Add(self.scrolled_panel)
-        #self.scrolled_panel.SetupScrolling()
 
-        #self.row_sizer.Add(self.pc_sizer)
-        #self.scrolled_panel.SetSizer(self.scr_sizer)
-
-        #self.pc_box = wx.BoxSizer(wx.HORIZONTAL)
         self.pcImg = wx.Image("pc.png", wx.BITMAP_TYPE_ANY)
         self.pcImg.Rescale(100, 100)
         self.pcBmp = wx.Bitmap(self.pcImg)
         self.pcBtn = None
         self.mac_string = None
         self.is_del = False
-        #self.is_new_row = False
 
-        #self.macBox = wx.BoxSizer(wx.HORIZONTAL)
         self.macText = None
         self.q = send_q
 
-        #self.mainSizer.Add(self.pc_box, 0, wx.LEFT, 5)
-        #self.mainSizer.Add(self.macBox,0,wx.LEFT,5)
+
         self.SetBackgroundColour(wx.WHITE)
         pub.subscribe(self.add_pc, 'add')
         pub.subscribe(self.del_pc, 'del')
@@ -238,15 +210,6 @@ class PcPanel(scrolled.ScrolledPanel):
             self.macText.SetFont(font)
             self.mac_string = mac
 
-            #row_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.scr_sizer.Add(row_sizer)
-            #pc_sizer = wx.BoxSizer(wx.VERTICAL)
-            #row_sizer.Add(pc_sizer)
-            #adding to the sizers
-            #if count > 1 and not self.is_del:
-             #   self.macBox.AddSpacer(15)
-              #  self.pc_box.AddSpacer(30)
-
             if len(self.row_sizer.GetChildren()) == 7:
                 self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
                 self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -259,12 +222,8 @@ class PcPanel(scrolled.ScrolledPanel):
                 self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)
                 self.pc_sizer.Add(self.macText, 0, wx.ALL, 5)
                 self.row_sizer.Add(self.pc_sizer, 0, wx.LEFT, 5)
-                #self.scr_sizer.Add(self.row_sizer)
 
                 self.pc_objects[mac] = [self.pcBtn, self.macText]
-
-
-
 
         elif created and pass_limit == False:
             self.macText.SetBackgroundColour(wx.WHITE)
@@ -276,7 +235,6 @@ class PcPanel(scrolled.ScrolledPanel):
         self.SetupScrolling()
         self.Layout()
 
-        #self.scr_sizer.Layout()
         self.is_del = False
 
 
@@ -285,29 +243,11 @@ class PcPanel(scrolled.ScrolledPanel):
         deleting a pc from the connected pc
         :return:
         '''
-    # find_pc = wx.FindWindowByName(mac)
-
-        # print(type(find_pc))
-        print("in del", mac)
-
         btn, txt = self.pc_objects[mac]
         btn.Destroy()
         txt.Destroy()
-
         del self.pc_objects[mac]
         self.Layout()
-
-
-
-
-
-
-        # self.pc_box.Hide(self.pcBtn)
-        # self.pc_box.Detach(self.pcBtn)
-        # self.macBox.Hide(self.macText)
-        # self.macBox.Detach(self.macText)
-        # self.is_del = True
-
 
     def handle_pc(self, event):
         mac = event.GetEventObject().GetName()
@@ -343,7 +283,6 @@ class TaskPanel(wx.Panel):
         self.procmonOlv = ObjectListView(self, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.procmonOlv.Bind(wx.EVT_LIST_COL_CLICK, self.onColClick)
         self.procmonOlv.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onSelect)
-        #self.procmonOlv.Select
 
         #pop up menu
         self.popupmenu = wx.Menu()
@@ -390,26 +329,16 @@ class TaskPanel(wx.Panel):
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
-       # self.SetSizer(mainSizer)
 
         # check for updates every 15 seconds
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.update("")
         self.setProcs()
-
-        print("hellllll    ",self.mac)
         flag = f"{self.mac}update_server"
         pub.subscribe(self.updateDisplay_server, flag )
-        #self.procmonOlv.Show()
-        #self.Layout()
-        #self.Hide()
         self.SetSizer(mainSizer)
-        #self.Layout()
-        #self.Hide()
-
         self.procmonOlv.Show()
-        #self.Show()
         # ----------------------------------------------------------------------
 
     def OnShowPopup(self, event):
@@ -439,17 +368,6 @@ class TaskPanel(wx.Panel):
         """
         obj = self.procmonOlv.GetSelectedObject()
         self.q.put((self.mac, server_pro.build_close_proc(obj.pid)))
-
-        '''
-        obj = self.procmonOlv.GetSelectedObject()
-        try:
-            pid = int(obj.pid)
-            p = psutil.Process(pid)
-            p.terminate()
-            self.update("")
-        except Exception as e:
-            pass
-        '''
 
     def onOpenInfo(self):
         global chrome_path
@@ -653,25 +571,6 @@ class LimitsPanel(wx.Panel):
             self.db.update_disk_value(disk)
             self.q.put((self.mac, server_pro.build_set_limits("Disk", str(disk))))
         self.frame.Close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
