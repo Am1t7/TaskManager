@@ -1,21 +1,20 @@
 import socket
 import threading
 import select
-import wx
-from pubsub import pub
 import RSAClass
 import string as string_c
 import random
 import server_pro
 import AESCipher
-import time
 
 class server_com():
-    '''
-    constructor
-    '''
     def __init__(self, server_ip, server_port, msg_q):
-
+        '''
+        constructor
+        :param server_ip: the server ip
+        :param server_port: the port
+        :param msg_q: the q of the msg
+        '''
         self.my_socket = socket.socket()
         self.server_ip = server_ip
         self.server_port = server_port
@@ -24,13 +23,12 @@ class server_com():
         self.key_lst = []
         self.aes_obj = None
         self.running = True
-
+        #start the main loop thread
         threading.Thread(target=self._main_loop).start()
 
 
     def _get_ip_by_socket(self, socket):
         '''
-
         :param socket: the client socket
         :return: the ip that addressed to this socket
         '''
@@ -43,7 +41,6 @@ class server_com():
 
     def _get_socket_by_ip(self, ip):
         '''
-
         :param ip: the client ip
         :return: the socket that addressed to this ip
         '''
@@ -55,13 +52,17 @@ class server_com():
         return socket
 
     def gen_key(self):
+        '''
+
+        :return: the generated key
+        '''
         # string that contains all the letters + all the digits
-        l = string_c.ascii_letters + "123456789"
+        st_all = string_c.ascii_letters + "123456789"
         string = ''
 
         # randomizing a 16 char long string
         for i in range(16):
-            char = random.choice(l)
+            char = random.choice(st_all)
             string += char
 
         # checking if the string isn't being used already as a symetric key
@@ -74,6 +75,10 @@ class server_com():
             return string
 
     def stop_threads(self):
+        '''
+        stopping the threads
+        :return:
+        '''
         self.running = False
     def _main_loop(self):
         '''
@@ -84,19 +89,13 @@ class server_com():
         self.my_socket.listen(3)
 
         while self.running:
-
             rlist, wlist, xlist = select.select(list(self.open_clients.keys()) + [self.my_socket], list(self.open_clients.keys()), [], 0.3)
-
             for current_socket in rlist:
                 if current_socket is self.my_socket:
                     # new client
                     client, address = self.my_socket.accept()
                     print(f'{address[0]} - connected')
                     self.open_clients[client] = address[0]
-                    #print("before")
-                    #self.msg_q.put((address[0], "new"))
-                    #print("after")
-
                 else:
                     try:
                         #recv data
@@ -106,8 +105,11 @@ class server_com():
                         print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)
                     else:
+                        #check if the data is the key
                         if data[:2] == "04":
+                            #get the key
                             cl_pub_key = data[2:]
+                            #sending encrypted key
                             sym_key = self.gen_key()
                             self.aes_obj = AESCipher.AESCipher(sym_key)
                             enc_sym_key = RSAClass.encrypt_msg(sym_key, cl_pub_key)
@@ -122,17 +124,30 @@ class server_com():
 
 
     def _disconnect_user(self, current_socket):
+        '''
+        check if pc has disconnected
+        :param current_socket:
+        :return:
+        '''
         print(f"{self.open_clients[current_socket]} - disconnected")
         self.msg_q.put((self._get_ip_by_socket(current_socket), "del"))
         del self.open_clients[current_socket]
         current_socket.close()
 
     def send_msg(self, ip, msg):
+        '''
+        sending a msg
+        :param ip: the ip of the pc
+        :param msg: the msg
+        :return:
+        '''
+        #getting the socket
         soc = self._get_socket_by_ip(ip)
         if type(msg) == str:
             msg = msg.encode()
 
         if soc:
+            #check if its not a swiching keys
             if msg[:2] != b'11':
                 msg = self.aes_obj.encrypt(msg)
             try:

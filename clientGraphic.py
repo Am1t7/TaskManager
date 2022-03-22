@@ -38,11 +38,10 @@ class MainPanel(wx.Panel):
                       "cpu":60,
                       "mem":75,
                       "disk":75}
-
+        #set the list of the tasks to display
         self.procmonOlv = ObjectListView(self, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.procmonOlv.Bind(wx.EVT_LIST_COL_CLICK, self.onColClick)
         self.procmonOlv.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onSelect)
-        #self.procmonOlv.Select
 
         #pop up menu
         self.popupmenu = wx.Menu()
@@ -52,19 +51,20 @@ class MainPanel(wx.Panel):
         self.procmonOlv.Bind(wx.EVT_CONTEXT_MENU, self.OnShowPopup)
 
 
-
+        #sort the tasks
         self.procmonOlv.EnableSorting()
-
+        #set the task to display
         self.setProcs()
 
+        #the sizer for the buttons
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
+        #set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
-
+        # the main sizer
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -79,7 +79,7 @@ class MainPanel(wx.Panel):
 
         self.procmonOlv.Show()
 
-        # create a pubsub receiver
+        #pubsub receivers
         pub.subscribe(self.updateDisplay ,'update')
         pub.subscribe(self.on_kill_proc_server, 'kill')
         pub.subscribe(self.limits_from_server, 'update_limits')
@@ -93,11 +93,21 @@ class MainPanel(wx.Panel):
 
     #----------------------------------------------------------------------
     def OnShowPopup(self, event):
+        '''
+        get the current position for the pop up menu
+        :param event:
+        :return:
+        '''
         pos = event.GetPosition()
         pos = self.procmonOlv.ScreenToClient(pos)
         self.procmonOlv.PopupMenu(self.popupmenu, pos)
 
     def OnPopupItemSelected(self, event):
+        '''
+        open the pop up menu and does an action according to what selected
+        :param event:
+        :return:
+        '''
         item = self.popupmenu.FindItemById(event.GetId())
         text = item.GetItemLabel()
         if text == "Info":
@@ -107,16 +117,19 @@ class MainPanel(wx.Panel):
 
 
     def onColClick(self, event):
-        """
+        '''
         Remember which column to sort by, currently only does ascending
-        """
+        :param event:
+        :return:
+        '''
         self.sort_col = event.GetColumn()
 
     #----------------------------------------------------------------------
     def onKillProc(self):
-        """
-        Kill the selected process by pid
-        """
+        '''
+        Kill the selected process by id
+        :return:
+        '''
         obj = self.procmonOlv.GetSelectedObject()
         try:
             pid = int(obj.pid)
@@ -126,6 +139,11 @@ class MainPanel(wx.Panel):
         except Exception as e:
             pass
     def on_kill_proc_server(self, pid):
+        '''
+        kill a process that sent from the server
+        :param pid:
+        :return:
+        '''
         try:
             p = psutil.Process(pid)
             p.terminate()
@@ -134,6 +152,10 @@ class MainPanel(wx.Panel):
             pass
 
     def onOpenInfo(self):
+        '''
+        open info on google to a selected process
+        :return:
+        '''
         global chrome_path
         obj = self.procmonOlv.GetSelectedObject()
         try:
@@ -147,25 +169,32 @@ class MainPanel(wx.Panel):
                 webbrowser.get(chrome_path).open(j)
 
     def onOpenLimit(self,event):
+        '''
+        open a window to set limits
+        :param event:
+        :return:
+        '''
         frame = LimitsFrame()
         panel = LimitsPanel(self)
 
         frame.Show()
     #----------------------------------------------------------------------
     def onSelect(self, event):
-        """
-        Gets called when an item is selected and helps keep track of
-        what item is selected
-        """
+        '''
+        Gets called when an item is selected and helps keep track of what item is selected
+        :param event:
+        :return:
+        '''
         item = event.GetItem()
         itemId = item.GetId()
         self.currentSelection = itemId
 
     #----------------------------------------------------------------------
     def setProcs(self):
-        """
-        Updates the ObjectListView widget display
-        """
+        '''
+        Updates the ObjectListView display
+        :return:
+        '''
         cw = self.col_w
         # change column widths as necessary
         if self.gui_shown:
@@ -202,32 +231,45 @@ class MainPanel(wx.Panel):
 
     #----------------------------------------------------------------------
     def update(self, event):
-        """
-        Start a thread to get the pid information
-        """
+        '''
+        Start a thread to get processes information
+        :param event:
+        :return:
+        '''
         print ("update thread started!")
         self.timer.Stop()
         controller.ProcThread()
 
     def update_first(self):
+        '''
+        update the process display
+        :return:
+        '''
         self.update("")
 
     #----------------------------------------------------------------------
     def updateDisplay(self, procs, bad_procs):
-        """
-        Catches the pubsub message from the thread and updates the display
-        """
-        print ("thread done, updating display!")
+        '''
+        Catches the pubsub message and updates the display
+        :param procs: the current procs on the pc
+        :param bad_procs: procs that break limits
+        :return:
+        '''
         self.procs = procs
         self.bad_procs = bad_procs
         self.setProcs()
+        #put the procs in q to send to server
         self.q.put(procs)
-        #self.q.put(bad_procs)
-        #self.q.put(client_pro.build_done())
         if not self.timer.IsRunning():
             self.timer.Start(15000)
 
     def limits_from_server(self, type, value):
+        '''
+        get limits from server and updates them to the client
+        :param type: the type of limit
+        :param value: what to update to
+        :return:
+        '''
         if type == "CPU":
             self.db.update_cpu_value(float(value))
         if type == "Memory":
@@ -237,40 +279,59 @@ class MainPanel(wx.Panel):
 
 
     def ban_from_server(self, mac, soft):
+        '''
+        add a ban software to the database
+        :param mac: the pc mac address
+        :param soft: software name
+        :return:
+        '''
         self.db.add_ban(mac, soft)
 
     def unban_from_server(self, mac, soft):
+        '''
+        delete a software from the banned software
+        :param mac: the mac address
+        :param soft: software name
+        :return:
+        '''
         self.db.delete_ban_proc(mac, soft)
 
 
     def display_opening_ban_proc(self, name, procs):
-        print("here")
+        '''
+        check if the proc is banned, closing the proc and displays message
+        :param name: the name of the process
+        :param procs: list of the processes in the pc
+        :return:
+        '''
         for p in procs:
             if name == p.name:
                 try:
+                    #close the process
                     psutil.Process(int(p.pid)).terminate()
-                    #self.update("")
                 except Exception as e:
                     pass
+        #updating the processes display
         self.update("")
         wx.MessageBox(f'{name} is banned!!!', 'Warning', wx.ICON_WARNING | wx.OK)
 
     def shut_pc(self):
+        '''
+        shutting the pc
+        :return:
+        '''
         os.system('shutdown -s')
 
     def close_sys(self):
+        '''
+        closing the software
+        :return:
+        '''
         self.frame.Destroy()
-
-    def OnExit(self):
-        print("90909090 exit 09090990")
-
-
-
 
 
 ########################################################################
 class LimitsFrame(wx.Frame):
-    """"""
 
     #---------------------------------------------------------------------
     def __init__(self):
@@ -281,13 +342,18 @@ class LimitsFrame(wx.Frame):
 
 class LimitsPanel(wx.Panel):
     def __init__(self, parent):
+        '''
+        constructor
+        :param parent: the frame
+        '''
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
+        #set the database
         self.db = DB()
         # the main sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # cpu
+        # the cpu input box
         cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         before_cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         cpu_text = wx.StaticText(self, 1, label="CPU:  ")
@@ -298,7 +364,7 @@ class LimitsPanel(wx.Panel):
         cpu_box.Add(self.cpuField, 0, wx.ALL, 5)
 
 
-        # mem
+        # the memory input box
         memory_box = wx.BoxSizer(wx.HORIZONTAL)
         before_memory_box = wx.BoxSizer(wx.HORIZONTAL)
         memory_text = wx.StaticText(self, 1, label="Memory: ")
@@ -308,7 +374,7 @@ class LimitsPanel(wx.Panel):
         before_memory_box.Add(before_mem,0,wx.ALL,5)
         memory_box.Add(self.memField, 0, wx.ALL, 5)
 
-        # disk
+        # the disk input box
         disk_box = wx.BoxSizer(wx.HORIZONTAL)
         before_disk_box = wx.BoxSizer(wx.HORIZONTAL)
         disk_text = wx.StaticText(self, 1, label="Disk: ")
@@ -318,11 +384,13 @@ class LimitsPanel(wx.Panel):
         disk_box.Add(self.diskField, 0, wx.ALL, 5)
         before_disk_box.Add(before_disk,0,wx.ALL,5)
 
+        #the apply button
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
         applyBtn = wx.Button(self, wx.ID_ANY, label="Apply",size = (200, 60))
         applyBtn.Bind(wx.EVT_BUTTON, self.handle_limits)
         btnBox.Add(applyBtn, 0, wx.ALL, 5)
 
+        #adding to the sizer
         b_sizer.Add(cpu_box, 0, wx.CENTER | wx.ALL, 5)
         b_sizer.Add(before_cpu_box,0,wx.CENTER | wx.ALL,5)
         b_sizer.Add(memory_box, 0, wx.CENTER | wx.ALL, 5)
@@ -337,6 +405,11 @@ class LimitsPanel(wx.Panel):
         self.Show()
 
     def handle_limits(self, event):
+        '''
+        update the limits to the database
+        :param event:
+        :return:
+        '''
         # extract limits
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
@@ -356,8 +429,6 @@ class LimitsPanel(wx.Panel):
 
 
 class MainFrame(wx.Frame):
-    """"""
-
     #----------------------------------------------------------------------
     def __init__(self, send_q):
         """Constructor"""
@@ -368,10 +439,7 @@ class MainFrame(wx.Frame):
         self.CreateStatusBar()
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
-
         self.Bind(wx.EVT_CLOSE, self._when_closed)
-
-
         # create a pubsub receiver
         pub.subscribe(self.updateStatusbar ,'update_status')
         
@@ -379,24 +447,33 @@ class MainFrame(wx.Frame):
         
     #----------------------------------------------------------------------
     def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
-        """"""
+        '''
+        updating the details of the procs status bar
+        :param procsnum: how many procs
+        :param totalcpu: the total cpu usage of all the procs
+        :param totalmem: the total memory usage of all the procs
+        :param totaldisk: the total disk usage of all the procs
+        :return:
+        '''
         procs=procsnum
         cpu=totalcpu
         mem = totalmem
         disk = totaldisk
-        #self.q.put(client_pro.build_total(procsnum,totalcpu,totalmem,totaldisk))
         self.SetStatusText("Processes: %s" % procs, 0)
         self.SetStatusText("CPU Usage: %s" % cpu, 1)
         self.SetStatusText("Physical Memory: %s" % mem, 2)
         self.SetStatusText("Disk: %s" % disk, 3)
 
     def _when_closed(self, event):
-        print("in close")
+        '''
+        if the client has been closed destroy him and close him
+        :param event:
+        :return:
+        '''
+
         self.DestroyChildren()
         self.Destroy()
         wx.CallAfter(pub.sendMessage, 'close_cl', )
-
-        #sys.exit("bye bye")
 
         
 

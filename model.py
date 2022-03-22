@@ -5,7 +5,7 @@ class Process(object):
     """
 
     #----------------------------------------------------------------------
-    def __init__(self, name, pid, exe, user, cpu, mem, disk, desc=None):
+    def __init__(self, name, pid, exe, user, cpu, mem, disk):
         """Constructor"""
         self.name = name
         self.pid = pid

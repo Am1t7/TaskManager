@@ -9,18 +9,27 @@ class RSAClass:
 
     def _generate_keys(self):
         '''
-            no input.
-            generate the RSA couple keys
+        no input.
+        generate the RSA couple keys
         :return:
         '''
         self._keyPair = RSA.generate(3072)
 
     def get_public_key_pem(self):
+        '''
+        gets the public key
+        :return:
+        '''
         pubkey = self._keyPair.publickey()
         pubkeyPEM = pubkey.exportKey()
         return pubkeyPEM
 
     def decrypt_msg(self, encdata):
+        '''
+        decrypt an encrypted mag
+        :param encdata: the encrypted msg
+        :return:
+        '''
         private_key = PKCS1_OAEP.new(self._keyPair)
         return private_key.decrypt(encdata)
 

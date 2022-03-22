@@ -82,7 +82,7 @@ class ProcThread(Thread):
                 if disk > float(db.get_disk_limits_value()):
                     bad_procs.append(procs.index(new_proc))
 
-
+                #update the sum of the cpu,memory,disk usage
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk
@@ -90,7 +90,7 @@ class ProcThread(Thread):
 
             except Exception as e:
                 pass
-
+        #check if banned proc has been open
         for s in db.get_soft_value(self.mac):
             for p in procs:
                 if str(s[1]) == p.name and str(s[1]):
