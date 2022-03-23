@@ -16,11 +16,12 @@ import sys
 ########################################################################
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 class MainPanel(wx.Panel):
-    """"""
-
-    #----------------------------------------------------------------------
     def __init__(self, parent, send_q):
-        """Constructor"""
+        '''
+        the main panel
+        :param parent: the frame
+        :param send_q: the send messages
+        '''
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
         self.currentSelection = None
@@ -95,8 +96,6 @@ class MainPanel(wx.Panel):
     def OnShowPopup(self, event):
         '''
         get the current position for the pop up menu
-        :param event:
-        :return:
         '''
         pos = event.GetPosition()
         pos = self.procmonOlv.ScreenToClient(pos)
@@ -105,8 +104,6 @@ class MainPanel(wx.Panel):
     def OnPopupItemSelected(self, event):
         '''
         open the pop up menu and does an action according to what selected
-        :param event:
-        :return:
         '''
         item = self.popupmenu.FindItemById(event.GetId())
         text = item.GetItemLabel()
@@ -118,9 +115,7 @@ class MainPanel(wx.Panel):
 
     def onColClick(self, event):
         '''
-        Remember which column to sort by, currently only does ascending
-        :param event:
-        :return:
+        Remember which column to sort by
         '''
         self.sort_col = event.GetColumn()
 
@@ -128,7 +123,6 @@ class MainPanel(wx.Panel):
     def onKillProc(self):
         '''
         Kill the selected process by id
-        :return:
         '''
         obj = self.procmonOlv.GetSelectedObject()
         try:
@@ -141,8 +135,6 @@ class MainPanel(wx.Panel):
     def on_kill_proc_server(self, pid):
         '''
         kill a process that sent from the server
-        :param pid:
-        :return:
         '''
         try:
             p = psutil.Process(pid)
@@ -154,7 +146,6 @@ class MainPanel(wx.Panel):
     def onOpenInfo(self):
         '''
         open info on google to a selected process
-        :return:
         '''
         global chrome_path
         obj = self.procmonOlv.GetSelectedObject()
@@ -171,8 +162,6 @@ class MainPanel(wx.Panel):
     def onOpenLimit(self,event):
         '''
         open a window to set limits
-        :param event:
-        :return:
         '''
         frame = LimitsFrame()
         panel = LimitsPanel(self)
@@ -182,8 +171,6 @@ class MainPanel(wx.Panel):
     def onSelect(self, event):
         '''
         Gets called when an item is selected and helps keep track of what item is selected
-        :param event:
-        :return:
         '''
         item = event.GetItem()
         itemId = item.GetId()
@@ -193,7 +180,6 @@ class MainPanel(wx.Panel):
     def setProcs(self):
         '''
         Updates the ObjectListView display
-        :return:
         '''
         cw = self.col_w
         # change column widths as necessary
@@ -214,11 +200,9 @@ class MainPanel(wx.Panel):
             ColumnDefn("cpu", "left", cw["cpu"], "cpu"),
             ColumnDefn("mem", "left", cw["mem"], "mem"),
             ColumnDefn("disk", "left", cw["disk"], "disk")
-            #ColumnDefn("description", "left", 200, "desc")
             ]
         self.procmonOlv.SetColumns(cols)
         self.procmonOlv.SetObjects(self.procs)
-        #self.procmonOlv.SortBy(self.sort_col)
         if self.currentSelection:
             self.procmonOlv.Select(self.currentSelection)
             self.procmonOlv.SetFocus()
@@ -318,14 +302,12 @@ class MainPanel(wx.Panel):
     def shut_pc(self):
         '''
         shutting the pc
-        :return:
         '''
         os.system('shutdown -s')
 
     def close_sys(self):
         '''
         closing the software
-        :return:
         '''
         self.frame.Destroy()
 
@@ -407,8 +389,6 @@ class LimitsPanel(wx.Panel):
     def handle_limits(self, event):
         '''
         update the limits to the database
-        :param event:
-        :return:
         '''
         # extract limits
         cpu = self.cpuField.GetValue()

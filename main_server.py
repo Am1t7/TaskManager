@@ -24,14 +24,7 @@ rsa_obj = RSAClass.RSAClass()
 mac_ip_dic = {}
 running = True
 
-'''
-def get_port():
-    port = random.randint(1000,2000)
-    while port in used_port:
-        port = random.randint(1000,2000)
-    used_port.append(port)
-    return port
-'''
+
 
 def handle_sending_msgs(msg_q, comm):
     '''
