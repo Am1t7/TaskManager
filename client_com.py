@@ -2,7 +2,6 @@ import socket
 import threading
 import uuid
 import client_pro
-import time
 import RSAClass
 import AESCipher
 class Client_com():
@@ -70,7 +69,7 @@ class Client_com():
                     self.server_on = False
                     self.my_socket.close()
                 else:
-                    #check if the data is the switch key
+                    #check if the data is the switched key
                     if data[:2] == b"11":
                         sym_key = data[2:]
                         sym_key = self.rsa_obj.decrypt_msg(sym_key).decode()

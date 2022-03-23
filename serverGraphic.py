@@ -239,6 +239,7 @@ class PcPanel(scrolled.ScrolledPanel):
             font = wx.Font(11, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
             self.macText.SetFont(font)
             self.mac_string = mac
+
             #check if there are more than 7 pc in a row
             if len(self.row_sizer.GetChildren()) == 7:
                 self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
