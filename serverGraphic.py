@@ -402,6 +402,12 @@ class TaskPanel(wx.Panel):
         '''
         self.sort_col = event.GetColumn()
 
+    def update(self, event):
+        '''
+        stop the 15 sec timer
+        '''
+        self.timer.Stop()
+
         # ----------------------------------------------------------------------
 
     def onKillProc(self):
