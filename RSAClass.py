@@ -1,7 +1,5 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-
-
 class RSAClass:
     def __init__(self):
         self._keyPair = None

@@ -1,5 +1,5 @@
 import controller
-import psutil # http://code.google.com/p/psutil/
+import psutil
 import wx
 import threading
 from ObjectListView import ObjectListView, ColumnDefn
@@ -7,13 +7,8 @@ from pubsub import pub
 import webbrowser
 from googlesearch import search
 from clientDB import DB
-import client_pro
 import os
-import sys
 
-
-
-########################################################################
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 class MainPanel(wx.Panel):
     def __init__(self, parent, send_q):
@@ -31,7 +26,6 @@ class MainPanel(wx.Panel):
         self.sort_col = 0
         self.q = send_q
         self.db = DB()
-
         self.col_w = {"name":175,
                       "pid":50,
                       "exe":300,
@@ -91,8 +85,6 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.close_sys, 'close')
         pub.subscribe(self.update_first, 'start')
 
-
-    #----------------------------------------------------------------------
     def OnShowPopup(self, event):
         '''
         get the current position for the pop up menu
@@ -119,7 +111,6 @@ class MainPanel(wx.Panel):
         '''
         self.sort_col = event.GetColumn()
 
-    #----------------------------------------------------------------------
     def onKillProc(self):
         '''
         Kill the selected process by id
@@ -311,11 +302,8 @@ class MainPanel(wx.Panel):
         '''
         self.frame.Destroy()
 
-
-########################################################################
 class LimitsFrame(wx.Frame):
 
-    #---------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
@@ -394,7 +382,7 @@ class LimitsPanel(wx.Panel):
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
-
+        #update the database
         if cpu != "":
             self.db.update_cpu_value(cpu)
         if mem != "":
@@ -409,7 +397,6 @@ class LimitsPanel(wx.Panel):
 
 
 class MainFrame(wx.Frame):
-    #----------------------------------------------------------------------
     def __init__(self, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768))
@@ -424,8 +411,7 @@ class MainFrame(wx.Frame):
         pub.subscribe(self.updateStatusbar ,'update_status')
         
         self.Show()
-        
-    #----------------------------------------------------------------------
+
     def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
         '''
         updating the details of the procs status bar

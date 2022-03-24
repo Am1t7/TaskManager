@@ -38,9 +38,7 @@ class ServerFrame(wx.Frame):
 
     def _when_closed(self, event):
         '''
-        closing the server
-        :param event:
-        :return:
+        closing the server:
         '''
         self.DestroyChildren()
         self.Destroy()
@@ -49,8 +47,6 @@ class ServerFrame(wx.Frame):
 
 
 class TaskFrame(wx.Frame):
-
-    #---------------------------------------------------------------------
     def __init__(self, mac, send_q):
         '''
         constructor

@@ -1,14 +1,11 @@
 ########################################################################
 import psutil
 import wx
-
 from model import Process
 from threading import Thread
-
 from pubsub import pub
 from clientDB import DB
 import uuid
-import os
 
 ########################################################################
 class ProcThread(Thread):
@@ -45,7 +42,6 @@ class ProcThread(Thread):
         disk_total = disk_io_counter[2] + disk_io_counter[3]  # read_bytes + write_bytes
         return disk_usage_process / disk_total * 100
 
-    #----------------------------------------------------------------------
     def run(self):
         '''
         main thread
