@@ -79,7 +79,7 @@ class Client_com():
                         data_dec = self.sym_key.decrypt(data)
                         self.msg_q.put(data_dec)
 
-                    print("client recv: ", data)
+                        print("client recv: ", data_dec)
 
     def send(self, msg):
         '''

@@ -63,7 +63,6 @@ class TaskFrame(wx.Frame):
 
         pub.subscribe(self.updateStatusbar, f'{self.mac}update_status_server')
 
-
     def updateStatusbar(self, procsnum,totalcpu,totalmem, totaldisk):
         '''
         creating the status bar
@@ -82,6 +81,7 @@ class TaskFrame(wx.Frame):
         self.SetStatusText("CPU Usage: %s" % cpu, 1)
         self.SetStatusText("Physical Memory: %s" % mem, 2)
         self.SetStatusText("Disk: %s" % disk, 3)
+
 
 class MainPanel(wx.Panel):
     def __init__(self, parent, send_q, mac):
