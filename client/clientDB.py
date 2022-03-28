@@ -1,6 +1,6 @@
 import sqlite3
 
-# !!! DB = Database !!!
+#  !!! DB = Database !!!
 
 class DB:
     '''
@@ -17,7 +17,7 @@ class DB:
         # The limit table name
         self.limits_tbl_name = "limits"
         self.fields = ['cpu', 'mem', 'disk']
-        #the ban procs table name
+        # the ban procs table name
         self.ban_procs_tbl_name = "Ban_procs"
 
         # The pointer to the DB
@@ -34,7 +34,7 @@ class DB:
         The function create both data bases with the values
         :return:
         """
-        #connecting
+        # connecting
         self.conn = sqlite3.connect(self.DB_name)
         self.cursor = self.conn.cursor()
 
@@ -43,13 +43,13 @@ class DB:
         self.cursor.execute(sql)
         sql = f"CREATE TABLE IF NOT EXISTS {self.ban_procs_tbl_name} ( mac TEXT, software TEXT)"
         self.cursor.execute(sql)
-        #insert values to the fields
+        # insert values to the fields
         for field in self.fields:
             if not self._field_exist(field):
                 sql = f"INSERT INTO {self.limits_tbl_name} VALUES ( '{field}', '10000')"
                 self.cursor.execute(sql)
 
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def _field_exist(self, field):
@@ -72,7 +72,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET value = '{value}' WHERE field = 'cpu'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def update_mem_value(self, value):
@@ -83,7 +83,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET value = '{value}' WHERE field = 'mem'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def update_disk_value(self, value):
@@ -94,7 +94,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET value = '{value}' WHERE field = 'disk'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def get_cpu_limits_value(self):
@@ -125,7 +125,7 @@ class DB:
         return self.cursor.fetchone()[0]
 
 
-#------------------------------------------------------------------------ Ban Procs ------------------------------------------------------------
+# ------------------------------------------------------------------------ Ban Procs ------------------------------------------------------------
 
     def mac_soft_exist(self, mac, soft):
         '''
@@ -153,7 +153,7 @@ class DB:
             retValue = True
             sql = f"INSERT INTO {self.ban_procs_tbl_name} VALUES ('{mac}', '{soft}')"
             self.cursor.execute(sql)
-            # update the db
+            #  update the db
             self.conn.commit()
 
         return retValue
@@ -166,7 +166,7 @@ class DB:
         '''
         sql = f"DELETE FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}' AND software = '{name}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def get_soft_value(self, mac):

@@ -36,12 +36,12 @@ class MainPanel(wx.Panel):
                       "cpu":60,
                       "mem":75,
                       "disk":75}
-        #set the list of the tasks to display
+        # set the list of the tasks to display
         self.procmonOlv = ObjectListView(self, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.procmonOlv.Bind(wx.EVT_LIST_COL_CLICK, self.onColClick)
         self.procmonOlv.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onSelect)
 
-        #pop up menu
+        # pop up menu
         self.popupmenu = wx.Menu()
         for text in "Info,End Task".split(","):
             item = self.popupmenu.Append(-1, text)
@@ -49,27 +49,27 @@ class MainPanel(wx.Panel):
         self.procmonOlv.Bind(wx.EVT_CONTEXT_MENU, self.OnShowPopup)
 
 
-        #sort the tasks
+        # sort the tasks
         self.procmonOlv.EnableSorting()
-        #set the task to display
+        # set the task to display
         self.setProcs()
 
-        #the sizer for the buttons
+        # the sizer for the buttons
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        #set the "set limits" button
+        # set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
 
-        # the main sizer
+        #  the main sizer
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(self.procmonOlv, 1, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
         self.SetSizer(mainSizer)
 
-        # check for updates every 15 seconds
+        #  check for updates every 15 seconds
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.update("")
@@ -77,7 +77,7 @@ class MainPanel(wx.Panel):
 
         self.procmonOlv.Show()
 
-        #pubsub receivers
+        # pubsub receivers
         pub.subscribe(self.updateDisplay ,'update')
         pub.subscribe(self.on_kill_proc_server, 'kill')
         pub.subscribe(self.limits_from_server, 'update_limits')
@@ -148,7 +148,7 @@ class MainPanel(wx.Panel):
         except Exception as e:
             pass
         else:
-            # to search
+            #  to search
             query = name
             for j in search(query, tld="co.in", num=1, stop=1, pause=2):
                 webbrowser.get(chrome_path).open(j)
@@ -161,7 +161,7 @@ class MainPanel(wx.Panel):
         panel = LimitsPanel(self)
 
         frame.Show()
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def onSelect(self, event):
         '''
         Gets called when an item is selected and helps keep track of what item is selected
@@ -170,13 +170,13 @@ class MainPanel(wx.Panel):
         itemId = item.GetId()
         self.currentSelection = itemId
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def setProcs(self):
         '''
         Updates the ObjectListView display
         '''
         cw = self.col_w
-        # change column widths as necessary
+        #  change column widths as necessary
         if self.gui_shown:
             cw["name"] = self.procmonOlv.GetColumnWidth(0)
             cw["pid"] = self.procmonOlv.GetColumnWidth(1)
@@ -207,7 +207,7 @@ class MainPanel(wx.Panel):
         self.procmonOlv.SortBy(self.sort_col)
         self.gui_shown = True
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def update(self, event):
         '''
         Start a thread to get processes information
@@ -225,7 +225,7 @@ class MainPanel(wx.Panel):
         '''
         self.update("")
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def updateDisplay(self, procs, bad_procs):
         '''
         Catches the pubsub message and updates the display
@@ -236,7 +236,7 @@ class MainPanel(wx.Panel):
         self.procs = procs
         self.bad_procs = bad_procs
         self.setProcs()
-        #put the procs in q to send to server
+        # put the procs in q to send to server
         self.q.put(procs)
         if not self.timer.IsRunning():
             self.timer.Start(15000)
@@ -285,11 +285,11 @@ class MainPanel(wx.Panel):
         for p in procs:
             if name == p.name:
                 try:
-                    #close the process
+                    # close the process
                     psutil.Process(int(p.pid)).terminate()
                 except Exception as e:
                     pass
-        #updating the processes display
+        # updating the processes display
         self.update("")
         wx.MessageBox(f'{name} is banned!!!', 'Warning', wx.ICON_WARNING | wx.OK)
 
@@ -326,12 +326,12 @@ class LimitsPanel(wx.Panel):
         '''
         wx.Panel.__init__(self, parent=parent)
         self.frame = parent
-        #set the database
+        # set the database
         self.db = DB()
-        # the main sizer
+        #  the main sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # the cpu input box
+        #  the cpu input box
         cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         before_cpu_box = wx.BoxSizer(wx.HORIZONTAL)
         cpu_text = wx.StaticText(self, 1, label="CPU:  ")
@@ -342,7 +342,7 @@ class LimitsPanel(wx.Panel):
         cpu_box.Add(self.cpuField, 0, wx.ALL, 5)
 
 
-        # the memory input box
+        #  the memory input box
         memory_box = wx.BoxSizer(wx.HORIZONTAL)
         before_memory_box = wx.BoxSizer(wx.HORIZONTAL)
         memory_text = wx.StaticText(self, 1, label="Memory: ")
@@ -352,7 +352,7 @@ class LimitsPanel(wx.Panel):
         before_memory_box.Add(before_mem,0,wx.ALL,5)
         memory_box.Add(self.memField, 0, wx.ALL, 5)
 
-        # the disk input box
+        #  the disk input box
         disk_box = wx.BoxSizer(wx.HORIZONTAL)
         before_disk_box = wx.BoxSizer(wx.HORIZONTAL)
         disk_text = wx.StaticText(self, 1, label="Disk: ")
@@ -362,13 +362,13 @@ class LimitsPanel(wx.Panel):
         disk_box.Add(self.diskField, 0, wx.ALL, 5)
         before_disk_box.Add(before_disk,0,wx.ALL,5)
 
-        #the apply button
+        # the apply button
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
         applyBtn = wx.Button(self, wx.ID_ANY, label="Apply",size = (200, 60))
         applyBtn.Bind(wx.EVT_BUTTON, self.handle_limits)
         btnBox.Add(applyBtn, 0, wx.ALL, 5)
 
-        #adding to the sizer
+        # adding to the sizer
         b_sizer.Add(cpu_box, 0, wx.CENTER | wx.ALL, 5)
         b_sizer.Add(before_cpu_box,0,wx.CENTER | wx.ALL,5)
         b_sizer.Add(memory_box, 0, wx.CENTER | wx.ALL, 5)
@@ -386,11 +386,11 @@ class LimitsPanel(wx.Panel):
         '''
         update the limits to the database
         '''
-        # extract limits
+        #  extract limits
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
-        #update the database
+        # update the database
         if cpu != "":
             self.db.update_cpu_value(cpu)
         if mem != "":
@@ -413,12 +413,12 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768))
         panel = MainPanel(self, send_q)
         
-        # set up the statusbar
+        #  set up the statusbar
         self.CreateStatusBar()
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
         self.Bind(wx.EVT_CLOSE, self._when_closed)
-        # create a pubsub receiver
+        #  create a pubsub receiver
         pub.subscribe(self.updateStatusbar ,'update_status')
         
         self.Show()
@@ -454,7 +454,7 @@ class MainFrame(wx.Frame):
 
         
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 if __name__ == "__main__":
     app = wx.App(False)
     frame = MainFrame()

@@ -20,7 +20,7 @@ class Client_com():
         self.server_on = False
         self.msg_q = msg_q
         self.my_socket = None
-        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper() #the mac addres of the pc
+        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper() # the mac addres of the pc
         self.rsa_obj = RSAClass.RSAClass()
         self.rsa_pub_key = self.rsa_obj.get_public_key_pem().decode()
         self.sym_key = None
@@ -47,11 +47,11 @@ class Client_com():
                 self.my_socket = socket.socket()
                 print("1 ", self.server_on)
                 try:
-                    #try connecting
+                    # try connecting
                     self.my_socket.connect((self.server_ip, self.server_port))
-                    #send mac
+                    # send mac
                     self.send(client_pro.build_mac(self.mac))
-                    #sending key
+                    # sending key
                     self.send(client_pro.build_key(self.rsa_pub_key))
                 except Exception as e:
                     print("connect error: ",str(e))
@@ -67,7 +67,7 @@ class Client_com():
         while self.running:
             while self.server_on and self.running:
                 try:
-                    #recv the data
+                    # recv the data
                     data_len = self.my_socket.recv(4).decode()
                     data = self.my_socket.recv(int(data_len))
                 except Exception as e:
@@ -79,7 +79,7 @@ class Client_com():
                         data = data.decode()
                         data_dec = self.sym_key.decrypt(data)
                         self.msg_q.put(data_dec)
-                    #check if the data is the switched key
+                    # check if the data is the switched key
                     elif data[:2] == b"11":
                         sym_key = data[2:]
                         sym_key = self.rsa_obj.decrypt_msg(sym_key).decode()
@@ -92,11 +92,11 @@ class Client_com():
         :return:
         '''
         try:
-            #sending the msg
+            # sending the msg
             self.my_socket.send((str(len(msg)).zfill(4)).encode())
             self.my_socket.send(str(msg).encode())
         except Exception as e:
-            print("send msg client_com: ",str(e))
+            print("send msg client_com: ", str(e))
             self.server_on = False
             self.my_socket.close()
 

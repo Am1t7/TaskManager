@@ -1,6 +1,6 @@
 import sqlite3
 
-# !!! DB = Database !!!
+#  !!! DB = Database !!!
 
 class DB:
     '''
@@ -14,18 +14,18 @@ class DB:
 
         self.DB_name = "ServerDB"
 
-        # The table's name
+        #  The table's name
         self.users_tbl_name = "users"
         self.limits_tbl_name = "limits"
         self.ban_procs_tbl_name = "Ban_procs"
 
-        # The pointer to the DB
+        #  The pointer to the DB
         self.conn = None
 
-        # The pointer to the DB's cursor
+        #  The pointer to the DB's cursor
         self.cursor = None
 
-        # Creating the DB
+        #  Creating the DB
         self._createDB()
 
     def _createDB(self):
@@ -37,7 +37,7 @@ class DB:
         self.conn = sqlite3.connect(self.DB_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
-        # create the data bases with the values
+        #  create the data bases with the values
         sql = f"CREATE TABLE IF NOT EXISTS {self.users_tbl_name} ( username TEXT, password TEXT)"
         self.cursor.execute(sql)
         sql = f"CREATE TABLE IF NOT EXISTS {self.limits_tbl_name} ( mac TEXT, CPU FLOAT, Memory FLOAT, Disk FLOAT)"
@@ -47,7 +47,7 @@ class DB:
 
         self.conn.commit()
 
-#---------------------------------------------------------------- users----------------------------------------------------
+# ---------------------------------------------------------------- users----------------------------------------------------
 
     def username_exist(self, username):
         '''
@@ -88,7 +88,7 @@ class DB:
             retValue = True
             sql = f"INSERT INTO {self.users_tbl_name} VALUES ('{username}', '{password}')"
             self.cursor.execute(sql)
-            # update the db
+            #  update the db
             self.conn.commit()
 
         return retValue
@@ -102,7 +102,7 @@ class DB:
         '''
         sql = f"DELETE FROM {self.users_tbl_name} WHERE username = '{username}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
 
@@ -116,11 +116,11 @@ class DB:
         '''
         sql = f"UPDATE {self.users_tbl_name} SET {value_to_update} = '{change}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
 
-#---------------------------------------------------------------- limits ---------------------------------------------
+# ---------------------------------------------------------------- limits ---------------------------------------------
 
     def mac_exist(self, mac):
         '''
@@ -148,7 +148,7 @@ class DB:
             retValue = True
             sql = f"INSERT INTO {self.limits_tbl_name} VALUES ('{mac}', '{cpu}', '{mem}', '{disk}')"
             self.cursor.execute(sql)
-            # update the db
+            #  update the db
             self.conn.commit()
 
         return retValue
@@ -161,7 +161,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET CPU = '{value}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def update_mem_value(self, value):
@@ -172,7 +172,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET Memory = '{value}' "
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def update_disk_value(self, value):
@@ -183,7 +183,7 @@ class DB:
         '''
         sql = f"UPDATE {self.limits_tbl_name} SET Disk = '{value}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
     def get_cpu_limits_value(self, mac):
@@ -218,7 +218,7 @@ class DB:
 
 
 
-#------------------------------------------------------------------------ Ban Procs -------------------------------------------------------------
+# ------------------------------------------------------------------------ Ban Procs -------------------------------------------------------------
 
     def mac_soft_exist(self, mac, soft):
         '''
@@ -246,7 +246,7 @@ class DB:
             retValue = True
             sql = f"INSERT INTO {self.ban_procs_tbl_name} VALUES ('{mac}', '{soft}')"
             self.cursor.execute(sql)
-            # update the db
+            #  update the db
             self.conn.commit()
 
         return retValue
@@ -260,7 +260,7 @@ class DB:
         '''
         sql = f"DELETE FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}' AND software = '{name}'"
         self.cursor.execute(sql)
-        # update the db
+        #  update the db
         self.conn.commit()
 
 

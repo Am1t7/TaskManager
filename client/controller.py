@@ -10,7 +10,7 @@ class ProcThread(Thread):
     Gets all the process information we need as psutil isn't very fast
     """
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
         self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
@@ -34,9 +34,9 @@ class ProcThread(Thread):
         :return:
         '''
         io_counters = p.io_counters()
-        disk_usage_process = io_counters[2] + io_counters[3]  # read_bytes + write_bytes
+        disk_usage_process = io_counters[2] + io_counters[3]  #  read_bytes + write_bytes
         disk_io_counter = psutil.disk_io_counters()
-        disk_total = disk_io_counter[2] + disk_io_counter[3]  # read_bytes + write_bytes
+        disk_total = disk_io_counter[2] + disk_io_counter[3]  #  read_bytes + write_bytes
         return disk_usage_process / disk_total * 100
 
     def run(self):
@@ -51,7 +51,7 @@ class ProcThread(Thread):
         disk_percent = 0
         count = 0
         db = DB()
-        # get the processes
+        #  get the processes
         for proc in psutil.process_iter():
             try:
                 p = psutil.Process(proc.pid)
@@ -67,7 +67,7 @@ class ProcThread(Thread):
                                    str(disk)
                                    )
                 procs.append(new_proc)
-                #check limits
+                # check limits
                 if cpu > float(db.get_cpu_limits_value()):
                     bad_procs.append(procs.index(new_proc))
                 if mem > float(db.get_mem_limits_value()):
@@ -75,7 +75,7 @@ class ProcThread(Thread):
                 if disk > float(db.get_disk_limits_value()):
                     bad_procs.append(procs.index(new_proc))
 
-                #update the sum of the cpu,memory,disk usage
+                # update the sum of the cpu,memory,disk usage
                 cpu_percent += cpu
                 mem_percent += mem
                 disk_percent += disk
@@ -83,7 +83,7 @@ class ProcThread(Thread):
 
             except Exception as e:
                 pass
-        #check if banned proc has been open
+        # check if banned proc has been open
         for s in db.get_soft_value(self.mac):
             for p in procs:
                 if str(s[1]) == p.name and str(s[1]):
@@ -94,7 +94,7 @@ class ProcThread(Thread):
 
 
 
-        # send pids to GUI
+        #  send pids to GUI
         wx.CallAfter(pub.sendMessage,'update',procs=procs, bad_procs=bad_procs)
         
         number_of_procs = len(procs)
