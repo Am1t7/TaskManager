@@ -13,15 +13,18 @@ import hashlib
 import string as string_c
 import RSAClass
 
-
+# the mac address of the client pc
 mac = ""
 server_db = DB()
 used_port = [setting.SERVER_PORT]
+# all the processes that runs on the client pc
 procs = []
+# processes that passed the limits
 bad_procs = []
 key_lst = []
 rsa_obj = RSAClass.RSAClass()
 mac_ip_dic = {}
+# keeps the thread alive until false
 running = True
 
 

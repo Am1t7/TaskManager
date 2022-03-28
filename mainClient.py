@@ -9,9 +9,11 @@ from pubsub import pub
 import uuid
 import RSAClass
 
+# the mac address of the pc
 mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper()
 rsa_obj = RSAClass.RSAClass()
 rsa_pub_key = rsa_obj.get_public_key_pem()
+# keeps the thread alive until false
 running = True
 
 def handle_sending_msgs(msg_q, comm):
@@ -47,24 +49,24 @@ def main_loop(msg_q):
         if msg[0] == "03":
             wx.CallAfter(pub.sendMessage, 'kill', pid=int(msg[1]))
         # check if the code is "02" and call the graphic
-        if msg[0] == "02":
+        elif msg[0] == "02":
             wx.CallAfter(pub.sendMessage, 'update_limits', type=str(msg[1]), value= msg[2])
         # check if the code is "04" and call the graphic
-        if msg[0] == "04":
+        elif msg[0] == "04":
             wx.CallAfter(pub.sendMessage, 'ban', mac=mac, soft=msg[1])
         # check if the code is "08" and call the graphic
-        if msg[0] == "08":
+        elif msg[0] == "08":
             wx.CallAfter(pub.sendMessage, 'del_ban', mac=mac, soft=msg[1])
         # check if the code is "09" and call the graphic
-        if msg[0] == "09":
+        elif msg[0] == "09":
             wx.CallAfter(pub.sendMessage, 'shut',)
         # check if the code is "05" and call the graphic
-        if msg[0] == "05":
+        elif msg[0] == "05":
             wx.CallAfter(pub.sendMessage, 'close', )
             client_com.Client_com.get_socket(comm).close()
             close_client()
         # check if the code is "10" and call the graphic
-        if msg[0] == "10":
+        elif msg[0] == "10":
             wx.CallAfter(pub.sendMessage, 'start', )
 
 def close_client():

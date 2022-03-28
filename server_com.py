@@ -105,8 +105,11 @@ class server_com():
                         print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)
                     else:
+                        if data != "":
+                            #put in q
+                            self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         #check if the data is the key
-                        if data[:2] == "04":
+                        elif data[:2] == "04":
                             #get the key
                             cl_pub_key = data[2:]
                             #sending encrypted key
@@ -114,9 +117,6 @@ class server_com():
                             self.aes_obj = AESCipher.AESCipher(sym_key)
                             enc_sym_key = RSAClass.encrypt_msg(sym_key, cl_pub_key)
                             self.send_msg(self._get_ip_by_socket(current_socket), server_pro.build_key(enc_sym_key))
-                        elif data != "":
-                            #put in q
-                            self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         else:
                             self._disconnect_user(current_socket)
 

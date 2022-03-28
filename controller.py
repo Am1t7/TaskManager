@@ -1,4 +1,3 @@
-########################################################################
 import psutil
 import wx
 from model import Process
@@ -6,8 +5,6 @@ from threading import Thread
 from pubsub import pub
 from clientDB import DB
 import uuid
-
-########################################################################
 class ProcThread(Thread):
     """
     Gets all the process information we need as psutil isn't very fast

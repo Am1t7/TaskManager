@@ -5,21 +5,24 @@ import client_pro
 import RSAClass
 import AESCipher
 class Client_com():
-    '''
-    constructor
-    '''
     def __init__(self, server_ip, server_port, msg_q):
-        self.server_ip = server_ip #the server ip
-        self.server_port = server_port #the port
-        self.server_on = False #check if the server on or off
-        self.msg_q = msg_q #msg to send to server queue
-        self.my_socket = None #the socket
+        '''
+        constructor
+        :param server_ip: the ip of the server pc
+        :param server_port: the port to communicate
+        :param msg_q: the q of the messages
+        '''
+        self.server_ip = server_ip
+        self.server_port = server_port
+        self.server_on = False
+        self.msg_q = msg_q
+        self.my_socket = None
         self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1]).upper() #the mac addres of the pc
-        self.rsa_obj = RSAClass.RSAClass() #RSA object
-        self.rsa_pub_key = self.rsa_obj.get_public_key_pem().decode() #public key
+        self.rsa_obj = RSAClass.RSAClass()
+        self.rsa_pub_key = self.rsa_obj.get_public_key_pem().decode()
         self.sym_key = None
-        self.running = True #thread status
-        #starting the threads
+        self.running = True
+        # starting the threads
         threading.Thread(target=self._main_loop).start()
         threading.Thread(target=self._recv_loop).start()
 
@@ -69,17 +72,15 @@ class Client_com():
                     self.server_on = False
                     self.my_socket.close()
                 else:
-                    #check if the data is the switched key
-                    if data[:2] == b"11":
-                        sym_key = data[2:]
-                        sym_key = self.rsa_obj.decrypt_msg(sym_key).decode()
-                        self.sym_key = AESCipher.AESCipher(sym_key)
-                    elif data != "":
+                    if data != "":
                         data = data.decode()
                         data_dec = self.sym_key.decrypt(data)
                         self.msg_q.put(data_dec)
-
-                        print("client recv: ", data_dec)
+                    #check if the data is the switched key
+                    elif data[:2] == b"11":
+                        sym_key = data[2:]
+                        sym_key = self.rsa_obj.decrypt_msg(sym_key).decode()
+                        self.sym_key = AESCipher.AESCipher(sym_key)
 
     def send(self, msg):
         '''
