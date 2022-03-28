@@ -8,6 +8,9 @@ from server import server_pro
 import AESCipher
 
 class server_com():
+    '''
+    responsible for the communication  with the client
+    '''
     def __init__(self, server_ip, server_port, msg_q):
         '''
         constructor

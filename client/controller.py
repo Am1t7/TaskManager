@@ -12,8 +12,8 @@ class ProcThread(Thread):
 
     #----------------------------------------------------------------------
     def __init__(self):
-        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
         """Constructor"""
+        self.mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)for ele in range(0, 8 * 6, 8)][::-1]).upper()
         Thread.__init__(self)
         self.start() 
 

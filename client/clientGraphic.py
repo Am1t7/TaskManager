@@ -11,6 +11,9 @@ import os
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 class MainPanel(wx.Panel):
+    '''
+    the main panel that display the process that runs on the pc
+    '''
     def __init__(self, parent, send_q):
         '''
         the main panel
@@ -303,7 +306,9 @@ class MainPanel(wx.Panel):
         self.frame.Destroy()
 
 class LimitsFrame(wx.Frame):
-
+    '''
+    the frame for the set limits option
+    '''
     def __init__(self):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
@@ -311,6 +316,9 @@ class LimitsFrame(wx.Frame):
 
 
 class LimitsPanel(wx.Panel):
+    '''
+    the pannel for the set limits option
+    '''
     def __init__(self, parent):
         '''
         constructor
@@ -397,6 +405,9 @@ class LimitsPanel(wx.Panel):
 
 
 class MainFrame(wx.Frame):
+    '''
+    the main frame for the display of the processes that runs on pc
+    '''
     def __init__(self, send_q):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768))

@@ -5,6 +5,9 @@ from client import client_pro
 import RSAClass
 import AESCipher
 class Client_com():
+    '''
+    responsible for the client communication with the server
+    '''
     def __init__(self, server_ip, server_port, msg_q):
         '''
         constructor

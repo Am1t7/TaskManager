@@ -1,6 +1,9 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 class RSAClass:
+    '''
+    responsible for the keys of the server and the client
+    '''
     def __init__(self):
         self._keyPair = None
         self._generate_keys()

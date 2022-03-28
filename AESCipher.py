@@ -4,6 +4,9 @@ from Crypto import Random
 import hashlib
 
 class AESCipher(object):
+    '''
+    responsible for the cipher of the messages
+    '''
 
     def __init__(self, key):
         """

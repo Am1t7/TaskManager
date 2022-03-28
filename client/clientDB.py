@@ -3,6 +3,9 @@ import sqlite3
 # !!! DB = Database !!!
 
 class DB:
+    '''
+    the client database
+    '''
 
     def __init__(self):
         """

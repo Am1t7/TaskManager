@@ -14,6 +14,9 @@ chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
 
 class ServerFrame(wx.Frame):
+    '''
+    the main server farme
+    '''
     def __init__(self,parent=None,send_q=None,mac=None):
         '''
         constructor
@@ -47,6 +50,9 @@ class ServerFrame(wx.Frame):
 
 
 class TaskFrame(wx.Frame):
+    '''
+    the frame when dis[laying the processes that rund on the pc
+    '''
     def __init__(self, mac, send_q):
         '''
         constructor
@@ -84,6 +90,9 @@ class TaskFrame(wx.Frame):
 
 
 class MainPanel(wx.Panel):
+    '''
+    the main panel for the server
+    '''
     def __init__(self, parent, send_q, mac):
         '''
         constructor
@@ -111,6 +120,9 @@ class MainPanel(wx.Panel):
         self.Layout()
 
 class LoginPanel(wx.Panel):
+    '''
+    the panel that responsible for the login screen display
+    '''
     def __init__(self, parent):
         '''
         constructor
@@ -182,6 +194,9 @@ class LoginPanel(wx.Panel):
 
 
 class PcPanel(scrolled.ScrolledPanel):
+    '''
+    the panel that responsible for the connected pc display
+    '''
     def __init__(self, parent, send_q):
         '''
         constructor
@@ -293,6 +308,9 @@ class PcPanel(scrolled.ScrolledPanel):
 
 
 class TaskPanel(wx.Panel):
+    '''
+    thae panel that responsible for the display of  processes that runs on pc
+    '''
     def __init__(self, parent, send_q, mac):
         '''
         constructor
@@ -548,6 +566,9 @@ class TaskPanel(wx.Panel):
             self.timer.Start(15000)
 
 class LimitsFrame(wx.Frame):
+    '''
+    the frame for the set limits option
+    '''
     def __init__(self, mac, send_q):
         '''
         constructor
@@ -559,6 +580,9 @@ class LimitsFrame(wx.Frame):
 
 
 class LimitsPanel(wx.Panel):
+    '''
+    the pannel for the set limits option
+    '''
     def __init__(self, parent, mac, send_q):
         '''
         constructor
