@@ -1,6 +1,4 @@
-import client_com
-import client_pro
-import clientGraphic
+from client import client_pro, client_com, clientGraphic
 import queue
 import setting
 import wx
@@ -91,7 +89,7 @@ recv_msg_q = queue.Queue()
 #send q
 send_msg_q = queue.Queue()
 #communication object
-comm = client_com.Client_com(setting.SERVER_IP,setting.SERVER_PORT,recv_msg_q)
+comm = client_com.Client_com(setting.SERVER_IP, setting.SERVER_PORT, recv_msg_q)
 #starting the threads
 threading.Thread(target=main_loop, args=(recv_msg_q,)).start()
 threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()

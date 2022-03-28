@@ -4,7 +4,7 @@ import select
 import RSAClass
 import string as string_c
 import random
-import server_pro
+from server import server_pro
 import AESCipher
 
 class server_com():

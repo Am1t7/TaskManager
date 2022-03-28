@@ -1,7 +1,7 @@
 import socket
 import threading
 import uuid
-import client_pro
+from client import client_pro
 import RSAClass
 import AESCipher
 class Client_com():

@@ -1,4 +1,4 @@
-import controller
+from client import controller
 import psutil
 import wx
 import threading
@@ -6,7 +6,7 @@ from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 import webbrowser
 from googlesearch import search
-from clientDB import DB
+from client.clientDB import DB
 import os
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'

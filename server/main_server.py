@@ -1,14 +1,12 @@
-import server_com
-import server_pro
-import serverGraphic
+from server import serverGraphic, server_pro, server_com
 import queue
 import wx
 import threading
 from pubsub import pub
 import setting
 import random
-from model import Process
-from serverDB import DB
+from client.model import Process
+from server.serverDB import DB
 import hashlib
 import string as string_c
 import RSAClass
@@ -159,7 +157,7 @@ msg_q = queue.Queue()
 #the send q
 send_msg_q = queue.Queue()
 #communicatin object
-comm = server_com.server_com(setting.SERVER_IP,setting.SERVER_PORT,msg_q)
+comm = server_com.server_com(setting.SERVER_IP, setting.SERVER_PORT, msg_q)
 #starts threads
 threading.Thread(target=main_loop, args=(msg_q,)).start()
 threading.Thread(target=handle_sending_msgs, args=(send_msg_q,comm,)).start()

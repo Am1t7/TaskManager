@@ -4,8 +4,8 @@ from ObjectListView import ObjectListView, ColumnDefn
 import threading
 import webbrowser
 from googlesearch import search
-import server_pro
-from serverDB import DB
+from server import server_pro
+from server.serverDB import DB
 import hashlib
 import wx.lib.scrolledpanel as scrolled
 
@@ -287,7 +287,7 @@ class PcPanel(scrolled.ScrolledPanel):
         frame = TaskFrame(mac, self.q)
         panel = TaskPanel(self, self.q, mac)
         #put in message q
-        self.q.put((mac,server_pro.build_start()))
+        self.q.put((mac, server_pro.build_start()))
         frame.Show()
 
 

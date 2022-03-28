@@ -1,9 +1,9 @@
 import psutil
 import wx
-from model import Process
+from client.model import Process
 from threading import Thread
 from pubsub import pub
-from clientDB import DB
+from client.clientDB import DB
 import uuid
 class ProcThread(Thread):
     """
