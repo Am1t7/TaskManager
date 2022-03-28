@@ -105,7 +105,7 @@ class server_com():
                         print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)
                     else:
-                        if data != "":
+                        if data != "" and data[:2] != "04":
                             #put in q
                             self.msg_q.put((self._get_ip_by_socket(current_socket),data))
                         #check if the data is the key

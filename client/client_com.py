@@ -72,7 +72,7 @@ class Client_com():
                     self.server_on = False
                     self.my_socket.close()
                 else:
-                    if data != "":
+                    if data != "" and data[:2] != b"11":
                         data = data.decode()
                         data_dec = self.sym_key.decrypt(data)
                         self.msg_q.put(data_dec)
