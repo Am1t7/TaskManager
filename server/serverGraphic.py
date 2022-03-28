@@ -35,6 +35,11 @@ class ServerFrame(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self._when_closed)
 
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
+
         self.SetSizer(box)
         self.Layout()
         self.Show()
@@ -66,6 +71,11 @@ class TaskFrame(wx.Frame):
         self.mac = mac
         self.StatusBar.SetFieldsCount(4)
         self.StatusBar.SetStatusWidths([200, 200, 200, 200])
+
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
 
         pub.subscribe(self.updateStatusbar, f'{self.mac}update_status_server')
 
@@ -137,6 +147,18 @@ class LoginPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         font = wx.Font(16, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
+        # title
+        title_image_box = wx.BoxSizer(wx.HORIZONTAL)
+
+        # adding the logo picture
+        logo_bmp = wx.Image("logo3r.png", wx.BITMAP_TYPE_ANY)
+        logo_bmp.Rescale(600, 300)
+
+        Image = wx.StaticBitmap(self, bitmap=wx.Bitmap(600, 300))
+        Image.SetBitmap(wx.Bitmap(logo_bmp))
+
+        title_image_box.Add(Image, 0, wx.ALIGN_CENTER, 5)
+
         #  username
         username_box = wx.BoxSizer(wx.HORIZONTAL)
         name_text = wx.StaticText(self, 1, label="Username: ")
@@ -164,7 +186,7 @@ class LoginPanel(wx.Panel):
 
 
         #  add all elements to sizer
-        sizer.AddSpacer(50)
+        sizer.Add(title_image_box, 0, wx.CENTER | wx.ALL, 5)
         sizer.Add(username_box, 0, wx.CENTER | wx.ALL, 5)
         sizer.Add(passBox, -1, wx.CENTER | wx.ALL, 5)
         sizer.AddSpacer(30)
@@ -577,6 +599,10 @@ class LimitsFrame(wx.Frame):
         '''
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
         panel = LimitsPanel(self, mac, send_q)
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
 
 
 class LimitsPanel(wx.Panel):

@@ -313,6 +313,10 @@ class LimitsFrame(wx.Frame):
         """Constructor"""
         wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
         panel = LimitsPanel(self)
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
 
 
 class LimitsPanel(wx.Panel):
@@ -420,6 +424,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self._when_closed)
         #  create a pubsub receiver
         pub.subscribe(self.updateStatusbar ,'update_status')
+
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
         
         self.Show()
 
