@@ -26,6 +26,7 @@ class server_com():
         self.key_lst = []
         self.aes_obj = None
         self.running = True
+        self.socket_key = {}
         # start the main loop thread
         threading.Thread(target=self._main_loop).start()
 
@@ -88,6 +89,8 @@ class server_com():
         the main loop that recv msg and put it in the q and handles the clients
         :return:
         '''
+        count = 0
+        sym_key = ""
         self.my_socket.bind((self.server_ip,self.server_port))
         self.my_socket.listen(3)
 
@@ -105,7 +108,6 @@ class server_com():
                         data_len = current_socket.recv(4).decode()
                         data = current_socket.recv(int(data_len)).decode()
                     except Exception as e:
-                        print("server com - main loop" , str(e))
                         self._disconnect_user(current_socket)
                     else:
                         if data != "" and data[:2] != "04":
@@ -115,10 +117,13 @@ class server_com():
                         elif data[:2] == "04":
                             # get the key
                             cl_pub_key = data[2:]
+                            self.socket_key[current_socket] = cl_pub_key
                             # sending encrypted key
-                            sym_key = self.gen_key()
-                            self.aes_obj = AESCipher.AESCipher(sym_key)
-                            enc_sym_key = RSAClass.encrypt_msg(sym_key, cl_pub_key)
+                            if count == 0:
+                                sym_key = self.gen_key()
+                                self.aes_obj = AESCipher.AESCipher(sym_key)
+                                count += 1
+                            enc_sym_key = RSAClass.encrypt_msg(sym_key, self.socket_key[current_socket])
                             self.send_msg(self._get_ip_by_socket(current_socket), server_pro.build_key(enc_sym_key))
                         else:
                             self._disconnect_user(current_socket)
@@ -145,7 +150,7 @@ class server_com():
         :return:
         '''
         # getting the socket
-        print("decrypt msg send: ",msg)
+        print("decrypt msg send:",msg)
         soc = self._get_socket_by_ip(ip)
         if type(msg) == str:
             msg = msg.encode()
@@ -160,7 +165,6 @@ class server_com():
                 print("server send: ",msg)
             except Exception as e:
                 print(msg)
-                print("serv_com send msg: ",str(e))
                 pass
         else:
             print("no soc")

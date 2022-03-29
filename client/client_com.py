@@ -45,7 +45,6 @@ class Client_com():
             while not self.server_on and self.running:
                 # creating the socket
                 self.my_socket = socket.socket()
-                print("1 ", self.server_on)
                 try:
                     # try connecting
                     self.my_socket.connect((self.server_ip, self.server_port))

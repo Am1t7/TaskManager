@@ -80,7 +80,6 @@ def break_msg(msg):
     #main_msg = str(msg[1][2:]).split(",")
     #msg_lst = []
     msg_lst = [code] + str(msg[1][2:]).split(",")
-    print(msg_lst)
     '''
     msg_lst.append(code)
     for m in main_msg:
