@@ -30,6 +30,8 @@ def handle_sending_msgs(msg_q, comm):
                 # send
                 comm.send(client_pro.build_proc(p.name, p.pid, p.exe, p.user, p.cpu, p.mem, p.disk))
             comm.send(client_pro.build_done())
+        else:
+            comm.my_socket.close()
 
 def main_loop(msg_q):
     '''
