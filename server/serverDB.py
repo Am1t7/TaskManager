@@ -153,35 +153,35 @@ class DB:
 
         return retValue
 
-    def update_cpu_value(self, value):
+    def update_cpu_value(self, value, mac):
         '''
         updating he cpu value
         :param value: the value to update to
         :return:
         '''
-        sql = f"UPDATE {self.limits_tbl_name} SET CPU = '{value}'"
+        sql = f"UPDATE {self.limits_tbl_name} SET CPU = '{value}' WHERE mac = '{mac}'"
         self.cursor.execute(sql)
         #  update the db
         self.conn.commit()
 
-    def update_mem_value(self, value):
+    def update_mem_value(self, value, mac):
         '''
         updating the momory value
         :param value: the value to update to
         :return:
         '''
-        sql = f"UPDATE {self.limits_tbl_name} SET Memory = '{value}' "
+        sql = f"UPDATE {self.limits_tbl_name} SET Memory = '{value}' WHERE mac = '{mac}'"
         self.cursor.execute(sql)
         #  update the db
         self.conn.commit()
 
-    def update_disk_value(self, value):
+    def update_disk_value(self, value, mac):
         '''
         updating the disk value
         :param value: the value to update to
         :return:
         '''
-        sql = f"UPDATE {self.limits_tbl_name} SET Disk = '{value}'"
+        sql = f"UPDATE {self.limits_tbl_name} SET Disk = '{value}' WHERE mac = '{mac}'"
         self.cursor.execute(sql)
         #  update the db
         self.conn.commit()

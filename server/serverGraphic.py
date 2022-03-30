@@ -686,13 +686,13 @@ class LimitsPanel(wx.Panel):
         disk = self.diskField.GetValue()
         # updates the database and put it in the send messages q
         if cpu != "":
-            self.db.update_cpu_value(cpu)
+            self.db.update_cpu_value(cpu, self.mac)
             self.q.put((self.mac, server_pro.build_set_limits("CPU", str(cpu))))
         if mem != "":
-            self.db.update_mem_value(mem)
+            self.db.update_mem_value(mem, self.mac)
             self.q.put((self.mac, server_pro.build_set_limits("Memory", str(mem))))
         if disk != "":
-            self.db.update_disk_value(disk)
+            self.db.update_disk_value(disk, self.mac)
             self.q.put((self.mac, server_pro.build_set_limits("Disk", str(disk))))
         self.frame.Close()
 

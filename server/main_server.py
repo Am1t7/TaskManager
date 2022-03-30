@@ -106,6 +106,11 @@ def main_loop(msg_q):
                 # building the process object for the procs that recived from client
                 p = Process(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7])
                 procs.append(p)
+                for ind in mac_ip_dic.keys():
+                    if mac_ip_dic[ind] == ip:
+                        mac = ind
+                        break
+                print(mac)
                 # check if one of the procs passed a limit
                 if float(msg[5]) > float(server_db.get_cpu_limits_value(mac)):
                     bad_procs.append(procs.index(p))
