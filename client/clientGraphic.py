@@ -395,13 +395,27 @@ class LimitsPanel(wx.Panel):
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
         # update the database
+        close = True
         if cpu != "":
-            self.db.update_cpu_value(cpu)
+            try:
+                self.db.update_cpu_value(float(cpu))
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
         if mem != "":
-            self.db.update_mem_value(mem)
+            try:
+                self.db.update_mem_value(float(mem))
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
         if disk != "":
-            self.db.update_disk_value((disk))
-        self.frame.Close()
+            try:
+                self.db.update_disk_value(float(disk))
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
+        if close:
+            self.frame.Close()
 
 
 

@@ -684,17 +684,34 @@ class LimitsPanel(wx.Panel):
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
+        close = True
         # updates the database and put it in the send messages q
         if cpu != "":
-            self.db.update_cpu_value(cpu, self.mac)
-            self.q.put((self.mac, server_pro.build_set_limits("CPU", str(cpu))))
+            try:
+                self.db.update_cpu_value(float(cpu), self.mac)
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
+            else:
+                self.q.put((self.mac, server_pro.build_set_limits("CPU", str(cpu))))
         if mem != "":
-            self.db.update_mem_value(mem, self.mac)
-            self.q.put((self.mac, server_pro.build_set_limits("Memory", str(mem))))
+            try:
+                self.db.update_mem_value(float(mem), self.mac)
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
+            else:
+                self.q.put((self.mac, server_pro.build_set_limits("Memory", str(mem))))
         if disk != "":
-            self.db.update_disk_value(disk, self.mac)
-            self.q.put((self.mac, server_pro.build_set_limits("Disk", str(disk))))
-        self.frame.Close()
+            try:
+                self.db.update_disk_value(float(disk), self.mac)
+            except Exception as e:
+                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                close = False
+            else:
+                self.q.put((self.mac, server_pro.build_set_limits("Disk", str(disk))))
+        if close:
+            self.frame.Close()
 
 
 
