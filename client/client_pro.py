@@ -30,6 +30,7 @@ def build_key(key):
     :param key: the key to send
     :return: the msg to send build according to the protocol
     '''
+    print(key)
     return f'04{key}'
 
 
@@ -49,14 +50,6 @@ def break_msg(msg):
     :return: the msg to send build according to the protocol
     '''
     code = msg[:2]
-    #main_msg = str(msg[2:]).split(",")
-    #msg_lst = []
     msg_lst = [code] + str(msg[2:]).split(",")
     print(msg_lst)
-    '''
-    msg_lst.append(code)
-    for m in main_msg:
-        msg_lst.append(m)
-    return msg_lst
-    '''
     return msg_lst
