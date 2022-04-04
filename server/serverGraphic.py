@@ -290,9 +290,11 @@ class PcPanel(scrolled.ScrolledPanel):
                 self.pc_objects[mac] = [self.pcBtn, self.macText]
         # for passed limits pc
         elif created and pass_limit == False:
-            self.macText.SetBackgroundColour(wx.WHITE)
+            btn, txt = self.pc_objects[mac]
+            txt.SetBackgroundColour(wx.WHITE)
         elif created and pass_limit == True:
-            self.macText.SetBackgroundColour(wx.RED)
+            btn, txt = self.pc_objects[mac]
+            txt.SetBackgroundColour(wx.RED)
 
         # show screen
         self.SetSizer(self.scr_sizer)
@@ -580,9 +582,9 @@ class TaskPanel(wx.Panel):
         self.bad_procs = bad_procs
         # check if process passed limit
         if len(bad_procs) != 0:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=True, created=True)
+            wx.CallAfter(pub.sendMessage, 'add', mac=self.mac, pass_limit=True, created=True)
         else:
-            wx.CallAfter(pub.sendMessage, 'add', mac="0", pass_limit=False, created=True)
+            wx.CallAfter(pub.sendMessage, 'add', mac=self.mac, pass_limit=False, created=True)
         self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)
