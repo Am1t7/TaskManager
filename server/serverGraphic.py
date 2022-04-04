@@ -24,10 +24,10 @@ class ServerFrame(wx.Frame):
         :param send_q: the send msg q
         :param mac: the client mac address
         '''
-        super(ServerFrame, self).__init__(parent, title="Server", size=(1024,768) ,style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
+        super(ServerFrame, self).__init__(parent, title="Share My Task", size=(1024,768), style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         #  create status bar
         self.CreateStatusBar()
-        self.StatusBar.SetStatusText("By: Amit Finder")
+        self.StatusBar.SetStatusText("By: Amit Finder 2022")
         #  creating the main panel
         main_panel = MainPanel(self,send_q, mac)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -266,6 +266,7 @@ class PcPanel(scrolled.ScrolledPanel):
             # creating the pc logo button
             self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize, name=mac)
             self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
+            self.pcBtn.SetToolTipString("press left to choose")
 
             # create the text with the mac address
             self.macText = wx.StaticText(self, -1, str(mac))
@@ -380,27 +381,32 @@ class TaskPanel(wx.Panel):
         #  set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
+        limitProcBtn.SetToolTipString("press to set limits")
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "ban process" button
         banProcBtn = wx.Button(self, label = "Ban Process")
         banProcBtn.Bind(wx.EVT_BUTTON, self.onBanProcess)
+        banProcBtn.SetToolTipString("press to ban a process")
         button_sizer.Add(banProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "unban process" button
         unbanProcBtn = wx.Button(self, label = "Unban Process")
         unbanProcBtn.Bind(wx.EVT_BUTTON, self.onUnbanProcess)
+        unbanProcBtn.SetToolTipString("press to unban process")
         button_sizer.Add(unbanProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "shutdown pc" button
         shutProcBtn = wx.Button(self, label = "Shutdown Pc")
         shutProcBtn.Bind(wx.EVT_BUTTON, self.onshutpc)
+        shutProcBtn.SetToolTipString("press to shutdown the connected pc")
         button_sizer.AddSpacer(550)
         button_sizer.Add(shutProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
 
         #  set the "close system" button
         closeProcBtn = wx.Button(self, label = "Close System")
         closeProcBtn.Bind(wx.EVT_BUTTON, self.onclosesys)
+        closeProcBtn.SetToolTipString("press to close the system in the connected computer")
         button_sizer.Add(closeProcBtn, 0, wx.RIGHT | wx.ALL, 0)
 
         # set the main sizer and adds the buttons

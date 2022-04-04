@@ -59,7 +59,13 @@ class MainPanel(wx.Panel):
         # set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
-        button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+        limitProcBtn.SetToolTipString("press to set limits")
+        #button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
+        txt = wx.StaticText(self, 1, label = "By: Amit Finder 2022")
+        button_sizer.Add(txt, 0, wx.ALIGN_RIGHT | wx.ALL,0)
+        button_sizer.AddSpacer(790)
+        button_sizer.Add(limitProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
 
 
         #  the main sizer
@@ -311,7 +317,7 @@ class LimitsFrame(wx.Frame):
     '''
     def __init__(self):
         """Constructor"""
-        wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400))
+        wx.Frame.__init__(self, None, title="Set Limits", size=(400, 400), style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         panel = LimitsPanel(self)
         # adding icon
         icon = wx.Icon()
@@ -428,7 +434,7 @@ class MainFrame(wx.Frame):
     '''
     def __init__(self, send_q):
         """Constructor"""
-        wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768))
+        wx.Frame.__init__(self, None, title="Share My Task", size=(1024, 768), style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
         panel = MainPanel(self, send_q)
         
         #  set up the statusbar
