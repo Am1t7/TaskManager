@@ -353,7 +353,7 @@ class HelpPanel(wx.Panel):
         m_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # adding the help picture
-        help_bmp = wx.Image("help_c.png", wx.BITMAP_TYPE_ANY)
+        help_bmp = wx.Image("help_c2.png", wx.BITMAP_TYPE_ANY)
         help_bmp.Rescale(1024, 768)
 
         Image = wx.StaticBitmap(self, bitmap=wx.Bitmap(600, 300))
