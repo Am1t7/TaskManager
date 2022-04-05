@@ -243,7 +243,7 @@ class MainPanel(wx.Panel):
         update the process display
         :return:
         '''
-        self.update("")
+        self.q.put(self.procs)
 
     # ----------------------------------------------------------------------
     def updateDisplay(self, procs, bad_procs):
@@ -255,9 +255,9 @@ class MainPanel(wx.Panel):
         '''
         self.procs = procs
         self.bad_procs = bad_procs
-        self.setProcs()
         # put the procs in q to send to server
         self.q.put(procs)
+        self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)
 
