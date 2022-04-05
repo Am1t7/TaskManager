@@ -235,7 +235,6 @@ class MainPanel(wx.Panel):
         :param event:
         :return:
         '''
-        print ("update thread started!")
         self.timer.Stop()
         controller.ProcThread()
 
@@ -341,7 +340,7 @@ class HelpFrame(wx.Frame):
 
 class HelpPanel(wx.Panel):
     '''
-    the pannel for the set limits option
+    the pannel for the help option
     '''
     def __init__(self, parent):
         '''

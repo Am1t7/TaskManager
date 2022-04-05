@@ -150,7 +150,6 @@ class server_com():
         :return:
         '''
         # getting the socket
-        print("decrypt msg send:",msg)
         soc = self._get_socket_by_ip(ip)
         if type(msg) == str:
             msg = msg.encode()
@@ -162,9 +161,7 @@ class server_com():
             try:
                 soc.send((str(len(msg)).zfill(4)).encode())
                 soc.send(msg)
-                print("server send: ",msg)
             except Exception as e:
-                print(msg)
                 pass
         else:
             print("no soc")

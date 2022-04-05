@@ -178,13 +178,3 @@ class DB:
         sql = f"SELECT * FROM {self.ban_procs_tbl_name} WHERE mac = '{mac}'"
         self.cursor.execute(sql)
         return self.cursor.fetchall()
-
-
-if __name__ == '__main__':
-    myDB = DB()
-    myDB.update_cpu_value(50)
-    print(myDB.get_cpu_limits_value())
-    myDB.update_mem_value(60)
-    print(myDB.get_mem_limits_value())
-    myDB.update_disk_value(70)
-    print(myDB.get_disk_limits_value())

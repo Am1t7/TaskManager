@@ -31,13 +31,6 @@ def build_close_sys():
     :return: the close system msg
     '''
     return f'05close'
-'''
-def build_send_port(port):
-
-    #:param port: the port
-    #:return: builds the port msg
-    return f'07{port}'
-'''
 
 def build_unban_proc(name):
     '''

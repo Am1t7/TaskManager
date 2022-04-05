@@ -266,7 +266,7 @@ class PcPanel(scrolled.ScrolledPanel):
             # creating the pc logo button
             self.pcBtn = wx.BitmapButton(self, wx.ID_ANY, bitmap=self.pcBmp, size=wx.DefaultSize, name=mac)
             self.pcBtn.Bind(wx.EVT_BUTTON, self.handle_pc)
-            self.pcBtn.SetToolTipString("press left to choose")
+            self.pcBtn.SetToolTip("press left to choose")
 
             # create the text with the mac address
             self.macText = wx.StaticText(self, -1, str(mac))
@@ -421,7 +421,7 @@ class TaskPanel(wx.Panel):
         mainSizer.Add(button_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
 
-        #  check for updates every 15 seconds
+        # check for updates every 15 seconds
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.update("")
@@ -461,8 +461,6 @@ class TaskPanel(wx.Panel):
         stop the 15 sec timer
         '''
         self.timer.Stop()
-
-        #  ----------------------------------------------------------------------
 
     def onKillProc(self):
         '''
@@ -625,7 +623,7 @@ class HelpFrame(wx.Frame):
 
 class HelpPanel(wx.Panel):
     '''
-    the pannel for the set limits option
+    the pannel for the help option
     '''
     def __init__(self, parent):
         '''

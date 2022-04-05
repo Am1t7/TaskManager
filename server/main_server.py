@@ -110,7 +110,6 @@ def main_loop(msg_q):
                     if mac_ip_dic[ind] == ip:
                         mac = ind
                         break
-                print(mac)
                 # check if one of the procs passed a limit
                 if float(msg[5]) > float(server_db.get_cpu_limits_value(mac)):
                     bad_procs.append(procs.index(p))

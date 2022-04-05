@@ -274,11 +274,3 @@ class DB:
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
-
-
-
-if __name__ == '__main__':
-    db = DB()
-    db._createDB()
-    db.add_user("amit","12345")
-
