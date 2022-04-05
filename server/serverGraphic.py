@@ -381,33 +381,39 @@ class TaskPanel(wx.Panel):
         #  set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
-        limitProcBtn.SetToolTipString("press to set limits")
+        limitProcBtn.SetToolTip("press to set limits")
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "ban process" button
         banProcBtn = wx.Button(self, label = "Ban Process")
         banProcBtn.Bind(wx.EVT_BUTTON, self.onBanProcess)
-        banProcBtn.SetToolTipString("press to ban a process")
+        banProcBtn.SetToolTip("press to ban a process")
         button_sizer.Add(banProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "unban process" button
         unbanProcBtn = wx.Button(self, label = "Unban Process")
         unbanProcBtn.Bind(wx.EVT_BUTTON, self.onUnbanProcess)
-        unbanProcBtn.SetToolTipString("press to unban process")
+        unbanProcBtn.SetToolTip("press to unban process")
         button_sizer.Add(unbanProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
         #  set the "shutdown pc" button
         shutProcBtn = wx.Button(self, label = "Shutdown Pc")
         shutProcBtn.Bind(wx.EVT_BUTTON, self.onshutpc)
-        shutProcBtn.SetToolTipString("press to shutdown the connected pc")
-        button_sizer.AddSpacer(550)
+        shutProcBtn.SetToolTip("press to shutdown the connected pc")
+        button_sizer.AddSpacer(470)
         button_sizer.Add(shutProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
 
         #  set the "close system" button
         closeProcBtn = wx.Button(self, label = "Close System")
         closeProcBtn.Bind(wx.EVT_BUTTON, self.onclosesys)
-        closeProcBtn.SetToolTipString("press to close the system in the connected computer")
+        closeProcBtn.SetToolTip("press to close the system in the connected computer")
         button_sizer.Add(closeProcBtn, 0, wx.RIGHT | wx.ALL, 0)
+
+        # set the "help" button
+        helpProcBtn = wx.Button(self, label = "Help")
+        helpProcBtn.Bind(wx.EVT_BUTTON, self.onOpenHelp)
+        helpProcBtn.SetToolTip("press to get help")
+        button_sizer.Add(helpProcBtn, 0, wx.RIGHT | wx.ALL, 0)
 
         # set the main sizer and adds the buttons
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -594,6 +600,53 @@ class TaskPanel(wx.Panel):
         self.setProcs()
         if not self.timer.IsRunning():
             self.timer.Start(15000)
+
+    def onOpenHelp(self, event):
+        '''
+        open the help window
+        '''
+        frame = HelpFrame()
+        panel = HelpPanel(self)
+
+        frame.Show()
+
+class HelpFrame(wx.Frame):
+    '''
+    the frame for the help option
+    '''
+    def __init__(self):
+        """Constructor"""
+        wx.Frame.__init__(self, None, title="Help", size=(1024, 768), style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
+        panel = HelpPanel(self)
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
+
+class HelpPanel(wx.Panel):
+    '''
+    the pannel for the set limits option
+    '''
+    def __init__(self, parent):
+        '''
+        constructor
+        :param parent: the frame
+        '''
+        wx.Panel.__init__(self, parent=parent)
+        self.frame = parent
+        #  the main sizer
+        m_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # adding the help picture
+        help_bmp = wx.Image("help_s.png", wx.BITMAP_TYPE_ANY)
+        help_bmp.Rescale(1024, 768)
+
+        Image = wx.StaticBitmap(self, bitmap=wx.Bitmap(600, 300))
+        Image.SetBitmap(wx.Bitmap(help_bmp))
+
+        self.SetSizer(m_sizer)
+        self.Layout()
+        self.Show()
 
 class LimitsFrame(wx.Frame):
     '''

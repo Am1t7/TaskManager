@@ -59,13 +59,19 @@ class MainPanel(wx.Panel):
         # set the "set limits" button
         limitProcBtn = wx.Button(self, label = "Set Limits")
         limitProcBtn.Bind(wx.EVT_BUTTON, self.onOpenLimit)
-        limitProcBtn.SetToolTipString("press to set limits")
-        #button_sizer.Add(limitProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+        limitProcBtn.SetToolTip("press to set limits")
+
+        # set the "help" button
+        helpProcBtn = wx.Button(self, label = "Help")
+        helpProcBtn.Bind(wx.EVT_BUTTON, self.onOpenHelp)
+        helpProcBtn.SetToolTip("press to get help")
 
         txt = wx.StaticText(self, 1, label = "By: Amit Finder 2022")
         button_sizer.Add(txt, 0, wx.ALIGN_RIGHT | wx.ALL,0)
-        button_sizer.AddSpacer(790)
+        button_sizer.AddSpacer(730)
         button_sizer.Add(limitProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
+        button_sizer.Add(helpProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
+
 
 
         #  the main sizer
@@ -165,6 +171,15 @@ class MainPanel(wx.Panel):
         '''
         frame = LimitsFrame()
         panel = LimitsPanel(self)
+
+        frame.Show()
+
+    def onOpenHelp(self, event):
+        '''
+        open the help window
+        '''
+        frame = HelpFrame()
+        panel = HelpPanel(self)
 
         frame.Show()
     # ----------------------------------------------------------------------
@@ -310,6 +325,44 @@ class MainPanel(wx.Panel):
         closing the software
         '''
         self.frame.Destroy()
+
+class HelpFrame(wx.Frame):
+    '''
+    the frame for the help option
+    '''
+    def __init__(self):
+        """Constructor"""
+        wx.Frame.__init__(self, None, title="Help", size=(1024, 768), style = wx.DEFAULT_FRAME_STYLE & ~wx.MAXIMIZE_BOX ^ wx.RESIZE_BORDER)
+        panel = HelpPanel(self)
+        # adding icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("tm.png", wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
+
+class HelpPanel(wx.Panel):
+    '''
+    the pannel for the set limits option
+    '''
+    def __init__(self, parent):
+        '''
+        constructor
+        :param parent: the frame
+        '''
+        wx.Panel.__init__(self, parent=parent)
+        self.frame = parent
+        #  the main sizer
+        m_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # adding the help picture
+        help_bmp = wx.Image("help_c.png", wx.BITMAP_TYPE_ANY)
+        help_bmp.Rescale(1024, 768)
+
+        Image = wx.StaticBitmap(self, bitmap=wx.Bitmap(600, 300))
+        Image.SetBitmap(wx.Bitmap(help_bmp))
+
+        self.SetSizer(m_sizer)
+        self.Layout()
+        self.Show()
 
 class LimitsFrame(wx.Frame):
     '''
