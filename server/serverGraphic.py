@@ -396,11 +396,15 @@ class TaskPanel(wx.Panel):
         unbanProcBtn.SetToolTip("press to unban process")
         button_sizer.Add(unbanProcBtn, 0, wx.ALIGN_CENTER | wx.ALL, 0)
 
+        txt = wx.StaticText(self, 1, label="By: Amit Finder 2022")
+        button_sizer.AddSpacer(200)
+        button_sizer.Add(txt)
+
         #  set the "shutdown pc" button
         shutProcBtn = wx.Button(self, label = "Shutdown Pc")
         shutProcBtn.Bind(wx.EVT_BUTTON, self.onshutpc)
         shutProcBtn.SetToolTip("press to shutdown the connected pc")
-        button_sizer.AddSpacer(470)
+        button_sizer.AddSpacer(170)
         button_sizer.Add(shutProcBtn, 0, wx.ALIGN_RIGHT | wx.ALL, 0)
 
         #  set the "close system" button
