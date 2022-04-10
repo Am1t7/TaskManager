@@ -4,6 +4,8 @@ import uuid
 from client import client_pro
 import RSAClass
 import AESCipher
+import wx
+from pubsub import pub
 class Client_com():
     '''
     responsible for the client communication with the server
@@ -70,6 +72,7 @@ class Client_com():
                     data = self.my_socket.recv(int(data_len))
                 except Exception as e:
                     self.server_on = False
+                    wx.CallAfter(pub.sendMessage, 'change', )
                     self.my_socket.close()
                 else:
                     if data != "" and data[:2] != b"11":

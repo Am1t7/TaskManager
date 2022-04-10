@@ -10,6 +10,7 @@ from client.clientDB import DB
 import os
 
 chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+is_from_server = False
 class MainPanel(wx.Panel):
     '''
     the main panel that display the process that runs on the pc
@@ -99,6 +100,11 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.shut_pc, 'shut')
         pub.subscribe(self.close_sys, 'close')
         pub.subscribe(self.update_first, 'start')
+        pub.subscribe(self.change_is_from_server, 'change')
+
+    def change_is_from_server(self):
+        global is_from_server
+        is_from_server = False
 
     def OnShowPopup(self, event):
         '''
@@ -268,6 +274,8 @@ class MainPanel(wx.Panel):
         :param value: what to update to
         :return:
         '''
+        global is_from_server
+        is_from_server = True
         if type == "CPU":
             self.db.update_cpu_value(float(value))
         if type == "Memory":
@@ -448,31 +456,36 @@ class LimitsPanel(wx.Panel):
         '''
         update the limits to the database
         '''
+        global is_from_server
         #  extract limits
         cpu = self.cpuField.GetValue()
         mem = self.memField.GetValue()
         disk = self.diskField.GetValue()
         # update the database
         close = True
-        if cpu != "":
-            try:
-                self.db.update_cpu_value(float(cpu))
-            except Exception as e:
-                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
-                close = False
-        if mem != "":
-            try:
-                self.db.update_mem_value(float(mem))
-            except Exception as e:
-                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
-                close = False
-        if disk != "":
-            try:
-                self.db.update_disk_value(float(disk))
-            except Exception as e:
-                wx.MessageBox("not valid!!!", "Erorr", wx.OK)
-                close = False
-        if close:
+        if not is_from_server:
+            if cpu != "":
+                try:
+                    self.db.update_cpu_value(float(cpu))
+                except Exception as e:
+                    wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                    close = False
+            if mem != "":
+                try:
+                    self.db.update_mem_value(float(mem))
+                except Exception as e:
+                    wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                    close = False
+            if disk != "":
+                try:
+                    self.db.update_disk_value(float(disk))
+                except Exception as e:
+                    wx.MessageBox("not valid!!!", "Erorr", wx.OK)
+                    close = False
+            if close:
+                self.frame.Close()
+        else:
+            wx.MessageBox("you can't change limits that the manager has set while he is online!", "Erorr", wx.OK)
             self.frame.Close()
 
 
