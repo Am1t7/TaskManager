@@ -275,7 +275,7 @@ class PcPanel(scrolled.ScrolledPanel):
             self.mac_string = mac
 
             # check if there are more than 7 pc in a row
-            if len(self.row_sizer.GetChildren()) == 7:
+            if len(self.pc_objects) == 7:
                 self.row_sizer = wx.BoxSizer(wx.HORIZONTAL)
                 self.pc_sizer = wx.BoxSizer(wx.VERTICAL)
                 self.pc_sizer.Add(self.pcBtn, 0, wx.ALL, 5)

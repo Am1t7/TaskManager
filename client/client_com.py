@@ -72,7 +72,6 @@ class Client_com():
                     data = self.my_socket.recv(int(data_len))
                 except Exception as e:
                     self.server_on = False
-                    wx.CallAfter(pub.sendMessage, 'change', )
                     self.my_socket.close()
                 else:
                     if data != "" and data[:2] != b"11":
